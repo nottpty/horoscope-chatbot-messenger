@@ -37,10 +37,7 @@ app.post('/webhook/', function(req, res) {
                 sendGenericMessage(sender)
                 continue
             }
-            let textTemp = new String(handleMessage(text))
-            console.log(textTemp + " from haddle message")
-            console.log(text.substring(0, 200))
-            sendTextMessage(sender, "Text received, echo: " + text.substring(0, 200))
+            sendTextMessage(sender, "Text received, echo: " + handleMessage(text))
         }
         if (event.postback) {
             let text = JSON.stringify(event.postback)
@@ -61,7 +58,7 @@ function handleMessage(message) {
     if (greeting && greeting.confidence > 0.8) {
         sendResponse('Hi there!');
     } else {
-        return 'Not Match!!';
+        return message;
         // default logic
     }
 }
