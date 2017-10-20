@@ -55,6 +55,8 @@ function firstEntity(nlp, name) {
 function handleMessage(message) {
     // check greeting is here and is confident
     const greeting = firstEntity(message.nlp, 'wit/greetings');
+    console.log(greeting)
+    console.log(greeting.confidence + " confidence")
     if (greeting && greeting.confidence > 0.8) {
         return 'Hi there!';
     } else {
