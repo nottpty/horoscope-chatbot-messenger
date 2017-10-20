@@ -56,7 +56,7 @@ function handleMessage(message) {
     // check greeting is here and is confident
     const greeting = firstEntity(message.nlp, 'wit/greetings');
     if (greeting && greeting.confidence > 0.8) {
-        sendResponse('Hi there!');
+        return 'Hi there!';
     } else {
         return message;
         // default logic
