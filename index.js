@@ -38,16 +38,7 @@ app.post('/webhook/', function(req, res) {
                 continue
             }
 
-            function handleMessage(message) {
-                // check greeting is here and is confident
-                const greeting = firstEntity(message.nlp, 'greeting');
-                if (greeting && greeting.confidence > 0.8) {
-                    sendResponse('Hi there!');
-                } else {
-                    // default logic
-                    sendTextMessage(sender, "Text received, echo: " + text.substring(0, 200))
-                }
-            }
+            sendTextMessage(sender, "Text received, echo: " + text.substring(0, 200))
         }
         if (event.postback) {
             let text = JSON.stringify(event.postback)
