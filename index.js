@@ -37,7 +37,17 @@ app.post('/webhook/', function(req, res) {
                 sendGenericMessage(sender)
                 continue
             }
-            sendTextMessage(sender, "Text received, echo: " + text.substring(0, 200))
+
+            function handleMessage(message) {
+                // check greeting is here and is confident
+                const greeting = firstEntity(message.nlp, 'greeting');
+                if (greeting && greeting.confidence > 0.8) {
+                    sendResponse('Hi there!');
+                } else {
+                    // default logic
+                    sendTextMessage(sender, "Text received, echo: " + text.substring(0, 200))
+                }
+            }
         }
         if (event.postback) {
             let text = JSON.stringify(event.postback)
@@ -47,6 +57,20 @@ app.post('/webhook/', function(req, res) {
     }
     res.sendStatus(200)
 })
+
+function firstEntity(nlp, name) {
+    return nlp && nlp.entities && nlp.entities && nlp.entities[name] && nlp.entities[name][0];
+}
+
+function handleMessage(message) {
+    // check greeting is here and is confident
+    const greeting = firstEntity(message.nlp, 'greeting');
+    if (greeting && greeting.confidence > 0.8) {
+        sendResponse('Hi there!');
+    } else {
+        // default logic
+    }
+}
 
 const token = process.env.FB_PAGE_ACCESS_TOKEN;
 
