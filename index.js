@@ -61,6 +61,7 @@ function handleMessage(message) {
     if (greeting && greeting.confidence > 0.8) {
         sendResponse('Hi there!');
     } else {
+        sendResponse('Not Match!!');
         // default logic
     }
 }
