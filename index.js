@@ -37,7 +37,8 @@ app.post('/webhook/', function(req, res) {
                 sendGenericMessage(sender)
                 continue
             }
-            console.log(handleMessage(text) + " from haddle message")
+            let textTemp = new String(handleMessage(text))
+            console.log(textTemp + " from haddle message")
             console.log(text.substring(0, 200))
             sendTextMessage(sender, "Text received, echo: " + text.substring(0, 200))
         }
