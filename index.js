@@ -33,10 +33,22 @@ const client = new Wit({
     // logger: new log.Logger(log.DEBUG) // optional
 });
 
-// const { interactive } = require('node-wit');
-// interactive(client);
-
-// console.log(client.message('สวัสดีจ้าา'));
+// client.message('สวัสดีจ้าา').then(function(result) {
+//     let maxConfidence = 0;
+//     let entities = "";
+//     for (let i = 0; i < Object.keys(result.entities).length; i++) {
+//         if (i === 0) {
+//             maxConfidence = result.entities[Object.keys(result.entities)[i]][0].confidence;
+//             entities = Object.keys(result.entities)[i];
+//         } else if (result.entities[Object.keys(result.entities)[i]][0].confidence > maxConfidence) {
+//             maxConfidence = result.entities[Object.keys(result.entities)[i]][0].confidence;
+//             entities = Object.keys(result.entities)[i];
+//         }
+//     }
+//     console.log(maxConfidence);
+//     console.log(entities);
+//     // console.log(Object.keys(result.entities).length) //will log results.
+// })
 
 app.post('/webhook/', function(req, res) {
     let messaging_events = req.body.entry[0].messaging
@@ -50,7 +62,27 @@ app.post('/webhook/', function(req, res) {
                 sendGenericMessage(sender)
                 continue
             }
-            sendTextMessage(sender, "Text received, echo: " + text.substring(0, 200))
+            let maxConfidence = 0;
+            let entities = "";
+            client.message(text.substring(0, 200)).then(function(result) {
+                for (let i = 0; i < Object.keys(result.entities).length; i++) {
+                    if (i === 0) {
+                        maxConfidence = result.entities[Object.keys(result.entities)[i]][0].confidence;
+                        entities = Object.keys(result.entities)[i];
+                    } else if (result.entities[Object.keys(result.entities)[i]][0].confidence > maxConfidence) {
+                        maxConfidence = result.entities[Object.keys(result.entities)[i]][0].confidence;
+                        entities = Object.keys(result.entities)[i];
+                    }
+                }
+                console.log(maxConfidence);
+                console.log(entities);
+                // console.log(Object.keys(result.entities).length) //will log results.
+            })
+            if (entities === "greetings" || entities === "greeting") {
+                sendTextMessage(sender, "สวัสดีครับ...คุณต้องการดูดวงไหมครับ")
+            } else if (entities === "intent") {
+                sendTextMessage(sender, "กรุณาใส่ข้อความให้ถูกต้องด้วยครับ")
+            }
         }
         if (event.postback) {
             let text = JSON.stringify(event.postback)
