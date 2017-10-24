@@ -76,13 +76,13 @@ app.post('/webhook/', function(req, res) {
                 }
                 console.log(maxConfidence);
                 console.log(entities);
+                if (entities === "greetings" || entities === "greeting") {
+                    sendTextMessage(sender, "สวัสดีครับ...คุณต้องการดูดวงไหมครับ")
+                } else if (entities === "intent") {
+                    sendTextMessage(sender, "กรุณาใส่ข้อความให้ถูกต้องด้วยครับ")
+                }
                 // console.log(Object.keys(result.entities).length) //will log results.
             })
-            if (entities === "greetings" || entities === "greeting") {
-                sendTextMessage(sender, "สวัสดีครับ...คุณต้องการดูดวงไหมครับ")
-            } else if (entities === "intent") {
-                sendTextMessage(sender, "กรุณาใส่ข้อความให้ถูกต้องด้วยครับ")
-            }
         }
         if (event.postback) {
             let text = JSON.stringify(event.postback)
