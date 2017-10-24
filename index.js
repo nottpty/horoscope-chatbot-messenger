@@ -26,6 +26,20 @@ app.get('/webhook/', function(req, res) {
     res.send('Error, wrong token')
 })
 
+function firstEntity(nlp, name) {
+    return nlp && nlp.entities && nlp.entities && nlp.entities[name] && nlp.entities[name][0];
+}
+
+function handleMessage(message) {
+    // check greeting is here and is confident
+    const greeting = firstEntity(message.nlp, 'greeting');
+    if (greeting && greeting.confidence > 0.8) {
+        sendResponse('Hi there!');
+    } else {
+        // default logic
+    }
+}
+
 app.post('/webhook/', function(req, res) {
     let messaging_events = req.body.entry[0].messaging
     for (let i = 0; i < messaging_events.length; i++) {
@@ -47,6 +61,18 @@ app.post('/webhook/', function(req, res) {
     }
     res.sendStatus(200)
 })
+
+const { Wit, log } = require('node-wit');
+
+const client = new Wit({
+    accessToken: 'UH7OOY34YWNIK5IMUJO7NRVGKHENN2UG',
+    logger: new log.Logger(log.DEBUG) // optional
+});
+
+// const { interactive } = require('node-wit');
+// interactive(client);
+
+console.log(client.message('สวัสดีจ้าา'));
 
 const token = process.env.FB_PAGE_ACCESS_TOKEN;
 
