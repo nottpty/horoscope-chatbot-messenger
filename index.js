@@ -30,13 +30,13 @@ const { Wit, log } = require('node-wit');
 
 const client = new Wit({
     accessToken: 'UH7OOY34YWNIK5IMUJO7NRVGKHENN2UG',
-    logger: new log.Logger(log.DEBUG) // optional
+    // logger: new log.Logger(log.DEBUG) // optional
 });
 
 // const { interactive } = require('node-wit');
 // interactive(client);
 
-console.log(client.message('สวัสดีจ้าา'));
+// console.log(client.message('สวัสดีจ้าา'));
 
 app.post('/webhook/', function(req, res) {
     let messaging_events = req.body.entry[0].messaging
@@ -45,6 +45,7 @@ app.post('/webhook/', function(req, res) {
         let sender = event.sender.id
         if (event.message && event.message.text) {
             let text = event.message.text
+            console.log(client.message(event.message.text));
             if (text === 'Generic') {
                 sendGenericMessage(sender)
                 continue
