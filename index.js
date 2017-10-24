@@ -26,20 +26,6 @@ app.get('/webhook/', function(req, res) {
     res.send('Error, wrong token')
 })
 
-function firstEntity(nlp, name) {
-    return nlp && nlp.entities && nlp.entities && nlp.entities[name] && nlp.entities[name][0];
-}
-
-function handleMessage(message) {
-    // check greeting is here and is confident
-    const greeting = firstEntity(message.nlp, 'greeting');
-    if (greeting && greeting.confidence > 0.8) {
-        sendResponse('Hi there!');
-    } else {
-        // default logic
-    }
-}
-
 const { Wit, log } = require('node-wit');
 
 const client = new Wit({
@@ -63,7 +49,7 @@ app.post('/webhook/', function(req, res) {
                 sendGenericMessage(sender)
                 continue
             }
-            sendTextMessage(sender, handleMessage(client.message(text.substring(0, 200))))
+            sendTextMessage(sender, "Text received, echo: " + text.substring(0, 200))
         }
         if (event.postback) {
             let text = JSON.stringify(event.postback)
