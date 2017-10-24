@@ -78,7 +78,7 @@ app.post('/webhook/', function(req, res) {
                 console.log(entities);
                 if (entities === "greetings" || entities === "greeting") {
                     sendTextMessage(sender, "สวัสดีครับ...คุณต้องการดูดวงไหมครับ")
-                } else if (entities === "intent") {
+                } else {
                     sendTextMessage(sender, "กรุณาใส่ข้อความให้ถูกต้องด้วยครับ")
                 }
                 // console.log(Object.keys(result.entities).length) //will log results.
