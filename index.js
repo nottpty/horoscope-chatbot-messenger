@@ -83,6 +83,8 @@ app.post('/webhook/', function(req, res) {
                     sendTextMessage(sender, "ไม่อยากดูจริงๆหรอ?")
                 } else if (maxConfidence > 0.8 && entities === "bye") {
                     sendTextMessage(sender, "แล้วเจอกันจ้าา")
+                } else if (maxConfidence > 0.8 && entities === "askDetail") {
+                    sendTextMessage(sender, "ตอนนี้เราสามารถดูดวงได้แค่ตามวันเกิดเอง")
                 } else {
                     sendTextMessage(sender, "กรุณาใส่ข้อความให้ถูกต้องด้วยครับ")
                 }
