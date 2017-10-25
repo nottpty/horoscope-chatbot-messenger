@@ -76,7 +76,7 @@ app.post('/webhook/', function(req, res) {
                 }
                 console.log(maxConfidence);
                 console.log(entities);
-                if (maxConfidence > 8 && (entities === "greetings" || entities === "greeting")) {
+                if (maxConfidence > 8 && entities === "greetings") {
                     sendTextMessage(sender, "สวัสดีครับ...คุณต้องการดูดวงกับเรามั้ย?")
                 } else if (maxConfidence > 8 && entities === "accept") {
                     sendTextMessage(sender, "'งั้นก็ส่งวันเกิดของคุณมาเลย!! (Ex. 28 มิถุนายน 2540)")
