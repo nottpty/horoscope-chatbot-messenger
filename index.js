@@ -78,9 +78,11 @@ app.post('/webhook/', function(req, res) {
                 if (maxConfidence > 0.8 && entities === "greeting") {
                     sendTextMessage(sender, "สวัสดีครับ...คุณต้องการดูดวงกับเรามั้ย?")
                 } else if (maxConfidence > 0.8 && entities === "accept") {
-                    sendTextMessage(sender, "'งั้นก็ส่งวันเกิดของคุณมาเลย!! (Ex. 28 มิถุนายน 2540)")
+                    sendTextMessage(sender, "งั้นก็ส่งวันเกิดของคุณมาเลย!! (ตัวอย่าง 28 มิถุนายน 2540)")
                 } else if (maxConfidence > 0.8 && entities === "cancel") {
-                    sendTextMessage(sender, "'ไม่อยากดูจริงๆหรอ?")
+                    sendTextMessage(sender, "ไม่อยากดูจริงๆหรอ?")
+                } else if (maxConfidence > 0.8 && entities === "bye") {
+                    sendTextMessage(sender, "แล้วเจอกันจ้าา")
                 } else {
                     sendTextMessage(sender, "กรุณาใส่ข้อความให้ถูกต้องด้วยครับ")
                 }
