@@ -80,35 +80,30 @@ app.post('/webhook/', function(req, res) {
                 console.log(maxConfidence);
                 console.log(entities);
                 if (maxConfidence > 0.8 && entities === "greeting") {
-                    stateConversation = entities;
                     sendTextMessage(sender, "สวัสดีครับ...คุณต้องการดูดวงกับเรามั้ย?")
                 } else if (maxConfidence > 0.8 && entities === "accept") {
-                    stateConversation = entities;
                     if (stateConversation === "greeting") {
                         sendTextMessage(sender, "งั้นก็ส่งวันเกิดของคุณมาเลย!! (ตัวอย่าง 28 มิถุนายน 2540)")
                     } else if (stateConversation === "birthday") {
                         sendTextMessage(sender, "ดวงของคุณช่วงนี้คือ...")
                     }
                 } else if (maxConfidence > 0.8 && entities === "cancel") {
-                    stateConversation = entities;
                     if (stateConversation === "date" || stateConversation === "month" || stateConversation === "year") {
                         sendTextMessage(sender, "งั้นก็ส่งวันเกิดของคุณมาเลย!! (ตัวอย่าง 28 มิถุนายน 2540)")
                     } else {
                         sendTextMessage(sender, "ไม่อยากดูจริงๆหรอ?")
                     }
                 } else if (maxConfidence > 0.8 && entities === "bye") {
-                    stateConversation = entities;
                     sendTextMessage(sender, "แล้วเจอกันจ้าา")
                 } else if (maxConfidence > 0.8 && entities === "askDetail") {
-                    stateConversation = entities;
                     sendTextMessage(sender, "ตอนนี้เราสามารถดูดวงได้แค่ตามวันเกิดเอง")
                 } else if (maxConfidence > 0.8 && (entities === "date" || entities === "month" || entities === "year") && stateConversation === "accept") {
-                    stateConversation = entities;
                     sendTextMessage(sender, "คุณเกิดวันที่ " + tempBirthday[0] + " " + tempBirthday[1] + " " + tempBirthday[2] + " ใช่หรือไม่?")
                 } else {
                     sendTextMessage(sender, "กรุณาใส่ข้อความให้ถูกต้องด้วยครับ")
                     sendTextMessage(sender, "ตอนนี้เราสามารถดูดวงได้แค่ตามวันเกิดเอง")
                 }
+                stateConversation = entities;
                 // console.log(Object.keys(result.entities).length) //will log results.
             })
         }
