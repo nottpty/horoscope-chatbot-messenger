@@ -57,7 +57,6 @@ app.post('/webhook/', function(req, res) {
         let sender = event.sender.id
         if (event.message && event.message.text) {
             let text = event.message.text
-            console.log(client.message(event.message.text));
             if (text === 'Generic') {
                 sendGenericMessage(sender)
                 continue
@@ -76,7 +75,7 @@ app.post('/webhook/', function(req, res) {
                 }
                 console.log(maxConfidence);
                 console.log(entities);
-                if (maxConfidence > 0.8 && entities === "greetings") {
+                if (maxConfidence > 0.8 && entities === "greeting") {
                     sendTextMessage(sender, "สวัสดีครับ...คุณต้องการดูดวงกับเรามั้ย?")
                 } else if (maxConfidence > 0.8 && entities === "accept") {
                     sendTextMessage(sender, "'งั้นก็ส่งวันเกิดของคุณมาเลย!! (Ex. 28 มิถุนายน 2540)")
