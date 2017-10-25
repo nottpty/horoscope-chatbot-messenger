@@ -79,25 +79,25 @@ app.post('/webhook/', function(req, res) {
                 }
                 console.log(maxConfidence);
                 console.log(entities);
-                if (maxConfidence > 0.8 && entities === "greeting") {
+                if (maxConfidence > 0.7 && entities === "greeting") {
                     sendTextMessage(sender, "สวัสดีครับ...คุณต้องการดูดวงกับเรามั้ย?")
-                } else if (maxConfidence > 0.8 && entities === "accept") {
+                } else if (maxConfidence > 0.7 && entities === "accept") {
                     if (stateConversation === "greeting") {
                         sendTextMessage(sender, "งั้นก็ส่งวันเกิดของคุณมาเลย!! (ตัวอย่าง 28 มิถุนายน 2540)")
                     } else if (stateConversation === "date" || stateConversation === "month" || stateConversation === "year") {
                         sendTextMessage(sender, "ดวงของคุณช่วงนี้คือ...")
                     }
-                } else if (maxConfidence > 0.8 && entities === "cancel") {
+                } else if (maxConfidence > 0.7 && entities === "cancel") {
                     if (stateConversation === "date" || stateConversation === "month" || stateConversation === "year") {
                         sendTextMessage(sender, "งั้นก็ส่งวันเกิดของคุณมาเลย!! (ตัวอย่าง 28 มิถุนายน 2540)")
                     } else {
                         sendTextMessage(sender, "ไม่อยากดูจริงๆหรอ?")
                     }
-                } else if (maxConfidence > 0.8 && entities === "bye") {
+                } else if (maxConfidence > 0.7 && entities === "bye") {
                     sendTextMessage(sender, "แล้วเจอกันจ้าา")
-                } else if (maxConfidence > 0.8 && entities === "askDetail") {
+                } else if (maxConfidence > 0.7 && entities === "askDetail") {
                     sendTextMessage(sender, "ตอนนี้เราสามารถดูดวงได้แค่ตามวันเกิดเอง")
-                } else if (maxConfidence > 0.8 && (entities === "date" || entities === "month" || entities === "year") && stateConversation === "accept") {
+                } else if (maxConfidence > 0.7 && (entities === "date" || entities === "month" || entities === "year") && stateConversation === "accept") {
                     sendTextMessage(sender, "คุณเกิดวันที่ " + tempBirthday[0] + " " + tempBirthday[1] + " " + tempBirthday[2] + " ใช่หรือไม่?")
                 } else {
                     sendTextMessage(sender, "กรุณาใส่ข้อความให้ถูกต้องด้วยครับ")
