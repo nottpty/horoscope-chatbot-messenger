@@ -51,6 +51,7 @@ const client = new Wit({
 // })
 
 let stateConversation = "";
+console.log(encodeURI("ดูดวง"));
 
 app.post('/webhook/', function(req, res) {
     let messaging_events = req.body.entry[0].messaging
@@ -85,7 +86,7 @@ app.post('/webhook/', function(req, res) {
                     if (stateConversation === "greeting") {
                         sendTextMessage(sender, "งั้นก็ส่งวันเกิดของคุณมาเลย!! (ตัวอย่าง 28 มิถุนายน 2540)")
                     } else if (stateConversation === "date" || stateConversation === "month" || stateConversation === "year") {
-                        sendTextMessage(sender, "ดวงของคุณช่วงนี้คือ...")
+                        sendTextMessage(sender, "http://www.google.com/search?q=" + encodeURI("ดูดวง"))
                     }
                 } else if (maxConfidence > 0.7 && entities === "cancel") {
                     if (stateConversation === "date" || stateConversation === "month" || stateConversation === "year") {
