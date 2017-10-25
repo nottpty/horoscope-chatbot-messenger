@@ -50,6 +50,8 @@ const client = new Wit({
 //     // console.log(Object.keys(result.entities).length) //will log results.
 // })
 
+let stateConversation = "";
+
 app.post('/webhook/', function(req, res) {
     let messaging_events = req.body.entry[0].messaging
     for (let i = 0; i < messaging_events.length; i++) {
@@ -64,6 +66,7 @@ app.post('/webhook/', function(req, res) {
             let maxConfidence = 0;
             let entities = "";
             client.message(text.substring(0, 200)).then(function(result) {
+                let tempBirthday = [];
                 for (let i = 0; i < Object.keys(result.entities).length; i++) {
                     if (i === 0) {
                         maxConfidence = result.entities[Object.keys(result.entities)[i]][0].confidence;
@@ -72,19 +75,28 @@ app.post('/webhook/', function(req, res) {
                         maxConfidence = result.entities[Object.keys(result.entities)[i]][0].confidence;
                         entities = Object.keys(result.entities)[i];
                     }
+                    tempBirthday.push(result.entities[Object.keys(result.entities)[i]][0].value);
                 }
                 console.log(maxConfidence);
                 console.log(entities);
                 if (maxConfidence > 0.8 && entities === "greeting") {
+                    stateConversation = "greeting";
                     sendTextMessage(sender, "สวัสดีครับ...คุณต้องการดูดวงกับเรามั้ย?")
-                } else if (maxConfidence > 0.8 && entities === "accept") {
+                } else if (maxConfidence > 0.8 && entities === "accept" && stateConversation === "greeting") {
+                    stateConversation = "accept";
                     sendTextMessage(sender, "งั้นก็ส่งวันเกิดของคุณมาเลย!! (ตัวอย่าง 28 มิถุนายน 2540)")
                 } else if (maxConfidence > 0.8 && entities === "cancel") {
+                    stateConversation = "cancel";
                     sendTextMessage(sender, "ไม่อยากดูจริงๆหรอ?")
                 } else if (maxConfidence > 0.8 && entities === "bye") {
+                    stateConversation = "bye";
                     sendTextMessage(sender, "แล้วเจอกันจ้าา")
                 } else if (maxConfidence > 0.8 && entities === "askDetail") {
+                    stateConversation = "askDetail";
                     sendTextMessage(sender, "ตอนนี้เราสามารถดูดวงได้แค่ตามวันเกิดเอง")
+                } else if (maxConfidence > 0.8 && (entities === "date" || entities === "month" || entities === "year") && stateConversation === "accept") {
+                    stateConversation = "birthday";
+                    sendTextMessage(sender, "วันเกิดของคุณคือ วันที่ " + tempBirthday[0] + " เดือน" + tempBirthday[1] + " " + tempBirthday[2] + " ใช่หรือไม่?")
                 } else {
                     sendTextMessage(sender, "กรุณาใส่ข้อความให้ถูกต้องด้วยครับ")
                     sendTextMessage(sender, "ตอนนี้เราสามารถดูดวงได้แค่ตามวันเกิดเอง")
