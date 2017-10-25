@@ -86,7 +86,7 @@ app.post('/webhook/', function(req, res) {
                     if (stateConversation === "greeting") {
                         sendTextMessage(sender, "งั้นก็ส่งวันเกิดของคุณมาเลย!! (ตัวอย่าง 28 มิถุนายน 2540)")
                     } else if (stateConversation === "date" || stateConversation === "month" || stateConversation === "year") {
-                        sendTextMessage(sender, "http://www.google.com/search?q=" + encodeURI("ดูดวง"))
+                        sendTextMessage(sender, "ดวงของคุณช่วงนี้คือ...")
                     }
                 } else if (maxConfidence > 0.7 && entities === "cancel") {
                     if (stateConversation === "date" || stateConversation === "month" || stateConversation === "year") {
