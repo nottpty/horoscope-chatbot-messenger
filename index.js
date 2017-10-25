@@ -76,11 +76,11 @@ app.post('/webhook/', function(req, res) {
                 }
                 console.log(maxConfidence);
                 console.log(entities);
-                if (maxConfidence > 8 && entities === "greetings") {
+                if (maxConfidence > 0.8 && entities === "greetings") {
                     sendTextMessage(sender, "สวัสดีครับ...คุณต้องการดูดวงกับเรามั้ย?")
-                } else if (maxConfidence > 8 && entities === "accept") {
+                } else if (maxConfidence > 0.8 && entities === "accept") {
                     sendTextMessage(sender, "'งั้นก็ส่งวันเกิดของคุณมาเลย!! (Ex. 28 มิถุนายน 2540)")
-                } else if (maxConfidence > 8 && entities === "cancel") {
+                } else if (maxConfidence > 0.8 && entities === "cancel") {
                     sendTextMessage(sender, "'ไม่อยากดูจริงๆหรอ?")
                 } else {
                     sendTextMessage(sender, "กรุณาใส่ข้อความให้ถูกต้องด้วยครับ")
