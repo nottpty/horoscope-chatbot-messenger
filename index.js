@@ -82,9 +82,11 @@ app.post('/webhook/', function(req, res) {
                 console.log(entities);
                 if (maxConfidence > 0.7 && entities === "greeting") {
                     sendTextMessage(sender, "สวัสดีครับ...คุณต้องการดูดวงกับเรามั้ย?")
+                } else if (maxConfidence > 0.7 && entities === "horoscope") {
+                    sendTextMessage(sender, "งั้นก็ส่งวันเกิดของคุณมาเลย!! (ตัวอย่าง 28 มิถุนายน 2540)")
                 } else if (maxConfidence > 0.7 && entities === "accept") {
                     if (stateConversation === "greeting") {
-                        sendTextMessage(sender, "งั้นก็ส่งวันเกิดของคุณมาเลย!! (ตัวอย่าง 28 มิถุนายน 2540)")
+                        sendTextMessage(sender, "งั้นก็ส่งวันเกิดของคุณมาเลย!! (เช่น 28 มิถุนายน 2540)")
                     } else if (stateConversation === "date" || stateConversation === "month" || stateConversation === "year") {
                         sendTextMessage(sender, "ดวงของคุณช่วงนี้คือ...")
                     }
@@ -95,7 +97,7 @@ app.post('/webhook/', function(req, res) {
                         sendTextMessage(sender, "ไม่อยากดูจริงๆหรอ?")
                     }
                 } else if (maxConfidence > 0.7 && entities === "bye") {
-                    sendTextMessage(sender, "แล้วเจอกันจ้าา")
+                    sendTextMessage(sender, "แล้วเจอกันใหม่จ้า")
                 } else if (maxConfidence > 0.7 && entities === "askDetail") {
                     sendTextMessage(sender, "ตอนนี้เราสามารถดูดวงได้แค่ตามวันเกิดเอง")
                 } else if (maxConfidence > 0.7 && (entities === "date" || entities === "month" || entities === "year") && stateConversation === "accept") {
