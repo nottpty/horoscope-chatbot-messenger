@@ -96,7 +96,7 @@ app.post('/webhook/', function(req, res) {
                     sendTextMessage(sender, "แล้วเจอกันใหม่จ้า")
                 } else if (maxConfidence > 0.7 && entities === "askDetail") {
                     sendTextMessage(sender, "ตอนนี้เราสามารถดูดวงได้แค่ตามวันเกิดเอง")
-                } else if (maxConfidence > 0.7 && (entities === "date" || entities === "month" || entities === "year") && stateConversation === "accept") {
+                } else if (maxConfidence > 0.7 && (entities === "date" || entities === "month" || entities === "year")) {
                     sendTextMessage(sender, "คุณเกิดวันที่ " + tempBirthday[0] + " " + tempBirthday[1] + " " + tempBirthday[2] + " ใช่หรือไม่?")
                 } else {
                     sendTextMessage(sender, "กรุณาใส่ข้อความให้ถูกต้องด้วยครับ")
