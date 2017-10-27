@@ -92,6 +92,7 @@ app.post('/webhook/', function(req, res) {
             let entities = "";
             client.message(text.substring(0, 200)).then(function(result) {
                 let tempBirthday = [];
+                console.log(result.entities);
                 for (let i = 0; i < Object.keys(result.entities).length; i++) {
                     if (i === 0) {
                         maxConfidence = result.entities[Object.keys(result.entities)[i]][0].confidence;
