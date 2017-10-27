@@ -83,12 +83,12 @@ app.post('/webhook/', function(req, res) {
                 if (maxConfidence > 0.7 && entities === "greeting") {
                     sendTextMessage(sender, "สวัสดีครับ...คุณต้องการดูดวงกับเรามั้ย?")
                 } else if (maxConfidence > 0.7 && entities === "horoscope") {
-                    sendTextMessage(sender, "งั้นก็ส่งวันเกิดของคุณมาเลย!! (เช่น 28 มิถุนายน 2540)")
+                    sendTextMessage(sender, "งั้นก็ส่งวันเกิดของคุณมาเลย!!\n(เช่น 28 มิถุนายน 1996)\nปีเกิดขอเป็น ค.ศ. นะครับ")
                 } else if (maxConfidence > 0.7 && entities === "accept") {
                     if (stateConversation === "greeting") {
-                        sendTextMessage(sender, "งั้นก็ส่งวันเกิดของคุณมาเลย!! (เช่น 28 มิถุนายน 2540)")
+                        sendTextMessage(sender, "งั้นก็ส่งวันเกิดของคุณมาเลย!!\n(เช่น 28 มิถุนายน 1996)\nปีเกิดขอเป็น ค.ศ. นะครับ")
                     } else if (stateConversation === "date" || stateConversation === "month" || stateConversation === "year") {
-                        sendTextMessage(sender, "ดวงของคุณช่วงนี้คือ...")
+                        sendTextMessage(sender, "ดวงของคุณคือ...")
                     }
                 } else if (maxConfidence > 0.7 && entities === "cancel") {
                     sendTextMessage(sender, "ไม่อยากดูจริงๆหรอ?")
