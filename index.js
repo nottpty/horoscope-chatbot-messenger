@@ -3,7 +3,6 @@
 const express = require('express')
 const bodyParser = require('body-parser')
 const request = require('request')
-const getJSON = require('get-json')
 const app = express()
 
 app.set('port', (process.env.PORT || 5000))
@@ -55,12 +54,17 @@ let stateConversation = "";
 let realBirthday = [];
 let predictionJSON = [];
 let monthJSON = [];
-getJSON('prediction.json', function(error, response) {
-    predictionJSON = response.result
-})
-getJSON('month.json', function(error, response) {
-    monthJSON = response.result
-})
+
+var fs = require('fs');
+predictionJSON = JSON.parse(fs.readFileSync('prediction.json', 'utf8'));
+monthJSON = JSON.parse(fs.readFileSync('month.json', 'utf8'));
+
+// $.getJSON("prediction.json", function(json) {
+//     predictionJSON = json;
+// });
+// $.getJSON("month.json", function(json) {
+//     month = json;
+// });
 
 function findNumberPrediction(resultBirthday) {
     let convertToStr = n + "";
