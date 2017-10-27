@@ -51,7 +51,26 @@ const client = new Wit({
 // })
 
 let stateConversation = "";
-console.log(encodeURI("ดูดวง"));
+let realBirthday = [];
+let predictionJSON = [];
+let monthJSON = [];
+$.getJSON("prediction.json", function(json) {
+    predictionJSON = json;
+});
+$.getJSON("month.json", function(json) {
+    month = json;
+});
+
+function findNumberPrediction(resultBirthday) {
+    let convertToStr = n + "";
+    while (convertToStr.length() != 1) {
+        let firstNum = parseInt(convertToStr.charAt(0) + "");
+        let secondNum = parseInt(convertToStr.charAt(1) + "");
+        let result = firstNum + secondNum;
+        convertToStr = result + "";
+    }
+    return convertToStr;
+}
 
 app.post('/webhook/', function(req, res) {
     let messaging_events = req.body.entry[0].messaging
@@ -88,7 +107,24 @@ app.post('/webhook/', function(req, res) {
                     if (stateConversation === "greeting") {
                         sendTextMessage(sender, "งั้นก็ส่งวันเกิดของคุณมาเลย!!\n(เช่น 28 มิถุนายน 1996)\nปีเกิดขอเป็น ค.ศ. นะครับ")
                     } else if (stateConversation === "date" || stateConversation === "month" || stateConversation === "year") {
-                        sendTextMessage(sender, "ดวงของคุณคือ...")
+                        for (let i = 0; i < Object.keys(monthJSON).length; i++) {
+                            if (monthJSON[Object.keys(monthJSON)[i]] === realBirthday[1]) {
+                                realBirthday[1] = Object.keys(monthJSON)[i];
+                            }
+                        }
+                        let firstDigit = parseInt(realBirthday[2].charAt(0));
+                        let secondDigit = parseInt(realBirthday[2].charAt(1));
+                        let thirdDigit = parseInt(realBirthday[2].charAt(2));
+                        let fourthDigit = parseInt(realBirthday[2].charAt(3));
+                        let result = parseInt(realBirthday[0]) + parseInt(realBirthday[1]) + firstDigit + secondDigit + thirdDigit + fourthDigit;
+                        let numberPrediction = findNumberPrediction(result);
+                        let resultMessagePrediction = "";
+                        for (let i = 0; i < Object.keys(predictionJSON).length; i++) {
+                            if (Object.keys(predictionJSON)[i] === result) {
+                                resultMessagePrediction = predictionJSON[Object.keys(predictionJSON)[i]];
+                            }
+                        }
+                        sendTextMessage(sender, resultMessagePrediction)
                     }
                 } else if (maxConfidence > 0.7 && entities === "cancel") {
                     sendTextMessage(sender, "ไม่อยากดูจริงๆหรอ?")
@@ -97,6 +133,9 @@ app.post('/webhook/', function(req, res) {
                 } else if (maxConfidence > 0.7 && entities === "askDetail") {
                     sendTextMessage(sender, "ตอนนี้เราสามารถดูดวงได้แค่ตามวันเกิดเอง")
                 } else if (maxConfidence > 0.7 && (entities === "date" || entities === "month" || entities === "year")) {
+                    realBirthday.push(tempBirthday[0]);
+                    realBirthday.push(tempBirthday[1]);
+                    realBirthday.push(tempBirthday[2]);
                     sendTextMessage(sender, "คุณเกิดวันที่ " + tempBirthday[0] + " " + tempBirthday[1] + " " + tempBirthday[2] + " ใช่หรือไม่?")
                 } else {
                     sendTextMessage(sender, "กรุณาใส่ข้อความให้ถูกต้องด้วยครับ")
