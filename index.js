@@ -113,7 +113,7 @@ app.post('/webhook/', function(req, res) {
                 if (maxConfidence > 0.7 && entities === "greeting") {
                     sendTextMessage(sender, "สวัสดีครับ...คุณต้องการดูดวงกับเรามั้ย?")
                 } else if (maxConfidence > 0.7 && entities === "horoscope") {
-                    sendTextMessage(sender, "งั้นก็ส่งวันเกิดของคุณมาเลย!!\n(เช่น 28 มิถุนายน 1996)\nปีเกิดขอเป็น ค.ศ. นะครับ")
+                    sendTextMessage(sender, "งั้นก็ส่งวันเกิดของคุณมาเลย!!\n(เช่น 28 มิถุนายน 1996)\n*ปีเกิดขอเป็น ค.ศ. นะครับ*")
                 } else if (maxConfidence > 0.7 && entities === "accept") {
                     if (stateConversation === "greeting") {
                         sendTextMessage(sender, "งั้นก็ส่งวันเกิดของคุณมาเลย!!\n(เช่น 28 มิถุนายน 1996)\n*ปีเกิดขอเป็น ค.ศ. นะครับ*")
@@ -130,12 +130,7 @@ app.post('/webhook/', function(req, res) {
                         let result = parseInt(realBirthday[0]) + parseInt(realBirthday[1]) + firstDigit + secondDigit + thirdDigit + fourthDigit;
                         let numberPrediction = findNumberPrediction(result);
                         let resultMessagePrediction = "";
-                        console.log(realBirthday[0]);
-                        console.log(realBirthday[1]);
-                        console.log(realBirthday[2]);
                         for (let i = 0; i < Object.keys(predictionJSON).length; i++) {
-                            console.log(Object.keys(predictionJSON)[i] + " key prediction");
-                            console.log(numberPrediction + " result");
                             if (Object.keys(predictionJSON)[i] === numberPrediction) {
                                 console.log(predictionJSON[Object.keys(predictionJSON)[i]]);
                                 resultMessagePrediction = predictionJSON[Object.keys(predictionJSON)[i]];
