@@ -100,13 +100,13 @@ app.post('/webhook/', function(req, res) {
                 console.log(result.entities);
                 for (let i = 0; i < Object.keys(result.entities).length; i++) {
                     if (i === 0) {
-                        maxConfidence = result.entities[Object.keys(result.entities)[i]][0].confidence;
+                        maxConfidence = result.entities[Object.keys(result.entities)[i]].confidence;
                         entities = Object.keys(result.entities)[i];
-                    } else if (result.entities[Object.keys(result.entities)[i]][0].confidence > maxConfidence) {
-                        maxConfidence = result.entities[Object.keys(result.entities)[i]][0].confidence;
+                    } else if (result.entities[Object.keys(result.entities)[i]].confidence > maxConfidence) {
+                        maxConfidence = result.entities[Object.keys(result.entities)[i]].confidence;
                         entities = Object.keys(result.entities)[i];
                     }
-                    tempBirthday.push(result.entities[Object.keys(result.entities)[i]][0].value);
+                    tempBirthday.push(result.entities[Object.keys(result.entities)[i]].value);
                 }
                 console.log(maxConfidence);
                 console.log(entities);
@@ -118,10 +118,8 @@ app.post('/webhook/', function(req, res) {
                     if (stateConversation === "greeting") {
                         sendTextMessage(sender, "งั้นก็ส่งวันเกิดของคุณมาเลย!!\n(เช่น 28 มิถุนายน 1996)\nปีเกิดขอเป็น ค.ศ. นะครับ")
                     } else if (stateConversation === "date" || stateConversation === "month" || stateConversation === "year") {
-                        console.log(predictionJSON);
-                        console.log(monthJSON);
                         for (let i = 0; i < Object.keys(monthJSON).length; i++) {
-                            if (monthJSON[Object.keys(monthJSON)[i]][0] === realBirthday[1]) {
+                            if (monthJSON[Object.keys(monthJSON)[i]] === realBirthday[1]) {
                                 realBirthday[1] = Object.keys(monthJSON)[i];
                             }
                         }
@@ -134,7 +132,7 @@ app.post('/webhook/', function(req, res) {
                         let resultMessagePrediction = "";
                         for (let i = 0; i < Object.keys(predictionJSON).length; i++) {
                             if (Object.keys(predictionJSON)[i] === result) {
-                                resultMessagePrediction = predictionJSON[Object.keys(predictionJSON)[i]][0];
+                                resultMessagePrediction = predictionJSON[Object.keys(predictionJSON)[i]];
                             }
                         }
                         sendTextMessage(sender, resultMessagePrediction)
