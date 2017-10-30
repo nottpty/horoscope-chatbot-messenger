@@ -116,7 +116,7 @@ app.post('/webhook/', function(req, res) {
                     sendTextMessage(sender, "งั้นก็ส่งวันเกิดของคุณมาเลย!!\n(เช่น 28 มิถุนายน 1996)\nปีเกิดขอเป็น ค.ศ. นะครับ")
                 } else if (maxConfidence > 0.7 && entities === "accept") {
                     if (stateConversation === "greeting") {
-                        sendTextMessage(sender, "งั้นก็ส่งวันเกิดของคุณมาเลย!!\n(เช่น 28 มิถุนายน 1996)\nปีเกิดขอเป็น ค.ศ. นะครับ")
+                        sendTextMessage(sender, "งั้นก็ส่งวันเกิดของคุณมาเลย!!\n(เช่น 28 มิถุนายน 1996)\n*ปีเกิดขอเป็น ค.ศ. นะครับ*")
                     } else if (stateConversation === "date" || stateConversation === "month" || stateConversation === "year") {
                         for (let i = 0; i < Object.keys(monthJSON).length; i++) {
                             if (monthJSON[Object.keys(monthJSON)[i]] === realBirthday[1]) {
@@ -153,7 +153,7 @@ app.post('/webhook/', function(req, res) {
                     realBirthday.push(tempBirthday[0]);
                     realBirthday.push(tempBirthday[1]);
                     realBirthday.push(tempBirthday[2]);
-                    sendTextMessage(sender, "คุณเกิดวันที่ " + tempBirthday[0] + " " + tempBirthday[1] + " " + tempBirthday[2] + " ใช่หรือไม่?\n*อย่าลืมเช็คปีเกิดด้วยนะว่าเป็น ค.ศ. รึยัง*")
+                    sendTextMessage(sender, "คุณเกิดวันที่ " + tempBirthday[0] + " " + tempBirthday[1] + " " + tempBirthday[2] + " ใช่หรือไม่?\n\n*อย่าลืมเช็คปีเกิดด้วยนะว่าเป็น ค.ศ. รึยัง*")
                 } else {
                     sendTextMessage(sender, "ตอนนี้เราสามารถดูดวงได้แค่ตามวันเกิดเอง")
                 }
