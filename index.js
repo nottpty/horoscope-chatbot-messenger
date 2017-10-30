@@ -77,6 +77,11 @@ function findNumberPrediction(resultBirthday) {
     return convertToStr;
 }
 
+process.on('unhandledRejection', (reason, p) => {
+    console.log('Unhandled Rejection at: Promise', p, 'reason:', reason);
+    // application specific logging, throwing an error, or other logic here
+});
+
 app.post('/webhook/', function(req, res) {
     let messaging_events = req.body.entry[0].messaging
     for (let i = 0; i < messaging_events.length; i++) {
