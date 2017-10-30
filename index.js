@@ -153,9 +153,8 @@ app.post('/webhook/', function(req, res) {
                     realBirthday.push(tempBirthday[0]);
                     realBirthday.push(tempBirthday[1]);
                     realBirthday.push(tempBirthday[2]);
-                    sendTextMessage(sender, "คุณเกิดวันที่ " + tempBirthday[0] + " " + tempBirthday[1] + " " + tempBirthday[2] + " ใช่หรือไม่?")
+                    sendTextMessage(sender, "คุณเกิดวันที่ " + tempBirthday[0] + " " + tempBirthday[1] + " " + tempBirthday[2] + " ใช่หรือไม่?\n*อย่าลืมเช็คปีเกิดด้วยนะว่าเป็น ค.ศ. รึยัง*")
                 } else {
-                    sendTextMessage(sender, "กรุณาใส่ข้อความให้ถูกต้องด้วยครับ")
                     sendTextMessage(sender, "ตอนนี้เราสามารถดูดวงได้แค่ตามวันเกิดเอง")
                 }
                 stateConversation = entities;
