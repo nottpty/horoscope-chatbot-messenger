@@ -131,6 +131,7 @@ app.post('/webhook/', function(req, res) {
                         let numberPrediction = findNumberPrediction(result);
                         let resultMessagePrediction = "";
                         for (let i = 0; i < Object.keys(predictionJSON).length; i++) {
+                            console.log(Object.keys(predictionJSON)[i]);
                             if (Object.keys(predictionJSON)[i] === result) {
                                 resultMessagePrediction = predictionJSON[Object.keys(predictionJSON)[i]];
                             }
