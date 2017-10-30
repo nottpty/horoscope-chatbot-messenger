@@ -68,7 +68,7 @@ monthJSON = JSON.parse(fs.readFileSync('month.json', 'utf8'));
 
 function findNumberPrediction(resultBirthday) {
     let convertToStr = resultBirthday + "";
-    while (convertToStr.length() != 1) {
+    while (convertToStr.length != 1) {
         let firstNum = parseInt(convertToStr.charAt(0) + "");
         let secondNum = parseInt(convertToStr.charAt(1) + "");
         let result = firstNum + secondNum;
