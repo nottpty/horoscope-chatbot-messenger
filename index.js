@@ -52,12 +52,10 @@ const client = new Wit({
 
 let stateConversation = "";
 let realBirthday = [];
-let predictionJSON = [];
-let monthJSON = [];
 
 var fs = require('fs');
-predictionJSON = JSON.parse(fs.readFileSync('prediction.json', 'utf8'));
-monthJSON = JSON.parse(fs.readFileSync('month.json', 'utf8'));
+let predictionJSON = JSON.parse(fs.readFileSync('prediction.json', 'utf8'));
+let monthJSON = JSON.parse(fs.readFileSync('month.json', 'utf8'));
 
 // $.getJSON("prediction.json", function(json) {
 //     predictionJSON = json;
