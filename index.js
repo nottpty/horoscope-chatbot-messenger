@@ -100,13 +100,13 @@ app.post('/webhook/', function(req, res) {
                 console.log(result.entities);
                 for (let i = 0; i < Object.keys(result.entities).length; i++) {
                     if (i === 0) {
-                        maxConfidence = result.entities[Object.keys(result.entities)[i]].confidence;
+                        maxConfidence = result.entities[Object.keys(result.entities)[i]][0].confidence;
                         entities = Object.keys(result.entities)[i];
-                    } else if (result.entities[Object.keys(result.entities)[i]].confidence > maxConfidence) {
-                        maxConfidence = result.entities[Object.keys(result.entities)[i]].confidence;
+                    } else if (result.entities[Object.keys(result.entities)[i]][0].confidence > maxConfidence) {
+                        maxConfidence = result.entities[Object.keys(result.entities)[i]][0].confidence;
                         entities = Object.keys(result.entities)[i];
                     }
-                    tempBirthday.push(result.entities[Object.keys(result.entities)[i]].value);
+                    tempBirthday.push(result.entities[Object.keys(result.entities)[i]][0].value);
                 }
                 console.log(maxConfidence);
                 console.log(entities);
