@@ -29,7 +29,7 @@ app.get('/webhook/', function(req, res) {
 const { Wit, log } = require('node-wit');
 
 const client = new Wit({
-    accessToken: 'UH7OOY34YWNIK5IMUJO7NRVGKHENN2UG',
+    accessToken: process.env.WIT_ACCESS_TOKEN,
     // logger: new log.Logger(log.DEBUG) // optional
 });
 
