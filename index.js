@@ -57,13 +57,6 @@ var fs = require('fs');
 let predictionJSON = JSON.parse(fs.readFileSync('prediction.json', 'utf8'));
 let monthJSON = JSON.parse(fs.readFileSync('month.json', 'utf8'));
 
-// $.getJSON("prediction.json", function(json) {
-//     predictionJSON = json;
-// });
-// $.getJSON("month.json", function(json) {
-//     month = json;
-// });
-
 function findNumberPrediction(resultBirthday) {
     let convertToStr = resultBirthday + "";
     while (convertToStr.length != 1) {
