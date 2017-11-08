@@ -175,6 +175,33 @@ function sendTextMessage(sender, text) {
             console.log('Error: ', response.body.error)
         }
     })
+
+    var headers = {
+        'Content-Type': 'application/json'
+    };
+
+    var dataString = {
+        recipient: {
+            id: sender
+        },
+        sender_action: "typing_on"
+    };
+
+    var options = {
+        url: 'https://graph.facebook.com/v2.6/me/messages?access_token=' + token,
+        method: 'POST',
+        headers: headers,
+        body: dataString
+    };
+
+    function callback(error, response, body) {
+        if (!error && response.statusCode == 200) {
+            console.log(body);
+        }
+    }
+
+    request(options, callback);
+
 }
 
 function sendGenericMessage(sender) {
