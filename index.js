@@ -240,7 +240,7 @@ function sendTextMessage(sender, text) {
 }
 
 function send({ sessionId }, { text }) {
-    const recipientId = sessions[sessionId].fbid;
+    const recipientId = sessionId;
     if (recipientId) {
         return typingBubble(recipientId, text), fbMessage(recipientId, text)
             .then(() => null)
