@@ -26,15 +26,6 @@ app.get('/webhook/', function(req, res) {
     res.send('Error, wrong token')
 })
 
-(function(d, s, id) {
-    var js, fjs = d.getElementsByTagName(s)[0];
-    if (d.getElementById(id)) { return; }
-    js = d.createElement(s);
-    js.id = id;
-    js.src = "//connect.facebook.com/en_US/messenger.Extensions.js";
-    fjs.parentNode.insertBefore(js, fjs);
-}(document, 'script', 'Messenger'));
-
 const { Wit, log } = require('node-wit');
 
 const client = new Wit({
@@ -153,16 +144,6 @@ app.post('/webhook/', function(req, res) {
                     sendTextMessage(sender, "ตอนนี้เราสามารถดูดวงได้แค่ตามวันเกิดเอง")
                 }
                 stateConversation = entities;
-                window.extAsyncInit = function() {
-                    MessengerExtensions.getUserID(function success(uids) {
-                        // User ID was successfully obtained. 
-                        var psid = uids.psid;
-                        console.log(psid);
-
-                    }, function error(err, errorMessage) {
-                        // Error handling code
-                    });
-                };
                 // console.log(Object.keys(result.entities).length) //will log results.
             })
         }
