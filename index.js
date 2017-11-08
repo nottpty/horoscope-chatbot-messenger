@@ -181,10 +181,10 @@ function sendTextMessage(sender, text) {
     };
 
     var dataString = {
-        recipient: {
-            id: sender
+        "recipient": {
+            "id": sender
         },
-        sender_action: "typing_on"
+        "sender_action": "typing_on"
     };
 
     var options = {
