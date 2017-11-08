@@ -26,6 +26,15 @@ app.get('/webhook/', function(req, res) {
     res.send('Error, wrong token')
 })
 
+(function(d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) { return; }
+    js = d.createElement(s);
+    js.id = id;
+    js.src = "//connect.facebook.com/en_US/messenger.Extensions.js";
+    fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'Messenger'));
+
 const { Wit, log } = require('node-wit');
 
 const client = new Wit({
@@ -144,6 +153,16 @@ app.post('/webhook/', function(req, res) {
                     sendTextMessage(sender, "ตอนนี้เราสามารถดูดวงได้แค่ตามวันเกิดเอง")
                 }
                 stateConversation = entities;
+                window.extAsyncInit = function() {
+                    MessengerExtensions.getUserID(function success(uids) {
+                        // User ID was successfully obtained. 
+                        var psid = uids.psid;
+                        console.log(psid);
+
+                    }, function error(err, errorMessage) {
+                        // Error handling code
+                    });
+                };
                 // console.log(Object.keys(result.entities).length) //will log results.
             })
         }
@@ -175,33 +194,6 @@ function sendTextMessage(sender, text) {
             console.log('Error: ', response.body.error)
         }
     })
-
-    var headers = {
-        'Content-Type': 'application/json'
-    };
-
-    var dataString = {
-        "recipient": {
-            "id": sender
-        },
-        "sender_action": "typing_on"
-    } + "";
-
-    var options = {
-        url: 'https://graph.facebook.com/v2.6/me/messages?access_token=' + token,
-        method: 'POST',
-        headers: headers,
-        body: dataString
-    };
-
-    function callback(error, response, body) {
-        if (!error && response.statusCode == 200) {
-            console.log(body);
-        }
-    }
-
-    request(options, callback);
-
 }
 
 function sendGenericMessage(sender) {
