@@ -141,7 +141,8 @@ app.post('/webhook/', function(req, res) {
                     realBirthday.push(tempBirthday[2]);
                     sendTextMessage(sender, "คุณเกิดวันที่ " + tempBirthday[0] + " " + tempBirthday[1] + " " + tempBirthday[2] + " ใช่หรือไม่?\n\n*อย่าลืมเช็คปีเกิดด้วยนะว่าเป็น ค.ศ. รึยัง*")
                 } else {
-                    sendTextMessage(sender, "ตอนนี้เราสามารถดูดวงได้แค่ตามวันเกิดเอง")
+                    send(sender, "ตอนนี้เราสามารถดูดวงได้แค่ตามวันเกิดเอง");
+                    // sendTextMessage(sender, "ตอนนี้เราสามารถดูดวงได้แค่ตามวันเกิดเอง")
                 }
                 stateConversation = entities;
                 // console.log(Object.keys(result.entities).length) //will log results.
@@ -158,9 +159,70 @@ app.post('/webhook/', function(req, res) {
 
 const token = process.env.FB_PAGE_ACCESS_TOKEN;
 
+const typingBubble = (id, text) => {
+
+    var body = JSON.stringify({
+        recipient: { id },
+        "sender_action": "typing_on"
+    });
+
+    const qs = 'access_token=' + encodeURIComponent(token);
+    return fetch('https://graph.facebook.com/me/messages?' + qs, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body,
+        })
+        .then(rsp => rsp.json())
+        .then(json => {
+            if (json.error && json.error.message) {
+                throw new Error(json.error.message);
+            }
+            return json;
+        });
+};
+
+const fbMessage = (id, text) => {
+
+    if (scenarioCombos.trends.indexOf(text) >= 0 || scenarioCombos.disruptions.indexOf(text) >= 0) {
+
+        var body = JSON.stringify({
+            recipient: { id },
+            message: {
+                attachment: {
+                    "type": "image",
+                    "payload": {
+                        "url": text
+                    }
+                }
+            },
+        });
+
+
+    } else {
+        var body = JSON.stringify({
+            recipient: { id },
+            message: { text },
+        });
+    }
+
+    const qs = 'access_token=' + encodeURIComponent(token);
+    return fetch('https://graph.facebook.com/me/messages?' + qs, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body,
+        })
+        .then(rsp => rsp.json())
+        .then(json => {
+            if (json.error && json.error.message) {
+                throw new Error(json.error.message);
+            }
+            return json;
+        });
+};
+
 function sendTextMessage(sender, text) {
     let messageData = { text: text }
-    console.log(request({
+    request({
         url: 'https://graph.facebook.com/v2.6/me/messages',
         qs: { access_token: token },
         method: 'POST',
@@ -174,7 +236,26 @@ function sendTextMessage(sender, text) {
         } else if (response.body.error) {
             console.log('Error: ', response.body.error)
         }
-    }));
+    })
+}
+
+function send({ sessionId }, { text }) {
+    const recipientId = sessions[sessionId].fbid;
+    if (recipientId) {
+        return typingBubble(recipientId, text), fbMessage(recipientId, text)
+            .then(() => null)
+            .catch((err) => {
+                console.error(
+                    'Oops! An error occurred while forwarding the response to',
+                    recipientId,
+                    ':',
+                    err.stack || err
+                );
+            });
+    } else {
+        console.error('Oops! Couldn\'t find user for session:', sessionId);
+        return Promise.resolve()
+    }
 }
 
 function sendGenericMessage(sender) {
