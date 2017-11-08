@@ -239,7 +239,7 @@ function sendTextMessage(sender, text) {
     })
 }
 
-function send({ sessionId }, { text }) {
+function send(sessionId, text) {
     const recipientId = sessionId;
     if (recipientId) {
         return typingBubble(recipientId, text), fbMessage(recipientId, text)
