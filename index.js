@@ -160,7 +160,7 @@ const token = process.env.FB_PAGE_ACCESS_TOKEN;
 
 function sendTextMessage(sender, text) {
     let messageData = { text: text }
-    request({
+    console.log(request({
         url: 'https://graph.facebook.com/v2.6/me/messages',
         qs: { access_token: token },
         method: 'POST',
@@ -174,7 +174,7 @@ function sendTextMessage(sender, text) {
         } else if (response.body.error) {
             console.log('Error: ', response.body.error)
         }
-    })
+    }));
 }
 
 function sendGenericMessage(sender) {
