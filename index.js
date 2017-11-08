@@ -203,16 +203,7 @@ function sendTextMessage(sender, text) {
 function send(sessionId, text) {
     const recipientId = sessionId;
     if (recipientId) {
-        return typingBubble(recipientId, text), sendTextMessage(recipientId, text)
-            .then(() => null)
-            .catch((err) => {
-                console.error(
-                    'Oops! An error occurred while forwarding the response to',
-                    recipientId,
-                    ':',
-                    err.stack || err
-                );
-            });
+        return typingBubble(recipientId, text), sendTextMessage(recipientId, text);
     } else {
         console.error('Oops! Couldn\'t find user for session:', sessionId);
         return Promise.resolve()
