@@ -102,12 +102,12 @@ app.post('/webhook/', function(req, res) {
                 console.log(maxConfidence);
                 console.log(entities);
                 if (maxConfidence > 0.7 && entities === "greeting") {
-                    sendTextMessage(sender, "สวัสดีครับ @Sender คุณต้องการดูดวงกับเรามั้ย?")
+                    send(sender, "สวัสดีครับ...คุณต้องการดูดวงกับเรามั้ย?")
                 } else if (maxConfidence > 0.7 && entities === "horoscope") {
-                    sendTextMessage(sender, "งั้นก็ส่งวันเกิดของคุณมาเลย!!\n(เช่น 28 มิถุนายน 1996)\n*ปีเกิดขอเป็น ค.ศ. นะครับ*")
+                    send(sender, "งั้นก็ส่งวันเกิดของคุณมาเลย!!\n(เช่น 28 มิถุนายน 1996)\n*ปีเกิดขอเป็น ค.ศ. นะครับ*")
                 } else if (maxConfidence > 0.7 && entities === "accept") {
                     if (stateConversation === "greeting") {
-                        sendTextMessage(sender, "งั้นก็ส่งวันเกิดของคุณมาเลย!!\n(เช่น 28 มิถุนายน 1996)\n*ปีเกิดขอเป็น ค.ศ. นะครับ*")
+                        send(sender, "งั้นก็ส่งวันเกิดของคุณมาเลย!!\n(เช่น 28 มิถุนายน 1996)\n*ปีเกิดขอเป็น ค.ศ. นะครับ*")
                     } else if (stateConversation === "date" || stateConversation === "month" || stateConversation === "year") {
                         for (let i = 0; i < Object.keys(monthJSON).length; i++) {
                             if (monthJSON[Object.keys(monthJSON)[i]] === realBirthday[1]) {
@@ -127,19 +127,19 @@ app.post('/webhook/', function(req, res) {
                                 resultMessagePrediction = predictionJSON[Object.keys(predictionJSON)[i]];
                             }
                         }
-                        sendTextMessage(sender, resultMessagePrediction)
+                        send(sender, resultMessagePrediction)
                     }
                 } else if (maxConfidence > 0.7 && entities === "cancel") {
-                    sendTextMessage(sender, "ไม่อยากดูจริงๆหรอ?")
+                    send(sender, "ไม่อยากดูจริงๆหรอ?")
                 } else if (maxConfidence > 0.7 && entities === "bye") {
-                    sendTextMessage(sender, "แล้วเจอกันใหม่จ้า")
+                    send(sender, "แล้วเจอกันใหม่จ้า")
                 } else if (maxConfidence > 0.7 && entities === "askDetail") {
-                    sendTextMessage(sender, "ตอนนี้เราสามารถดูดวงได้แค่ตามวันเกิดเอง")
+                    send(sender, "ตอนนี้เราสามารถดูดวงได้แค่ตามวันเกิดเอง")
                 } else if (maxConfidence > 0.7 && (entities === "date" || entities === "month" || entities === "year")) {
                     realBirthday.push(tempBirthday[0]);
                     realBirthday.push(tempBirthday[1]);
                     realBirthday.push(tempBirthday[2]);
-                    sendTextMessage(sender, "คุณเกิดวันที่ " + tempBirthday[0] + " " + tempBirthday[1] + " " + tempBirthday[2] + " ใช่หรือไม่?\n\n*อย่าลืมเช็คปีเกิดด้วยนะว่าเป็น ค.ศ. รึยัง*")
+                    send(sender, "คุณเกิดวันที่ " + tempBirthday[0] + " " + tempBirthday[1] + " " + tempBirthday[2] + " ใช่หรือไม่?\n\n*อย่าลืมเช็คปีเกิดด้วยนะว่าเป็น ค.ศ. รึยัง*")
                 } else {
                     send(sender, "ตอนนี้เราสามารถดูดวงได้แค่ตามวันเกิดเอง");
                     // sendTextMessage(sender, "ตอนนี้เราสามารถดูดวงได้แค่ตามวันเกิดเอง")
@@ -150,7 +150,7 @@ app.post('/webhook/', function(req, res) {
         }
         if (event.postback) {
             let text = JSON.stringify(event.postback)
-            sendTextMessage(sender, "Postback received: " + text.substring(0, 200), token)
+            send(sender, "Postback received: " + text.substring(0, 200), token)
             continue
         }
     }
@@ -165,45 +165,6 @@ const typingBubble = (id, text) => {
         recipient: { id },
         "sender_action": "typing_on"
     });
-
-    const qs = 'access_token=' + encodeURIComponent(token);
-    return fetch('https://graph.facebook.com/me/messages?' + qs, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body,
-        })
-        .then(rsp => rsp.json())
-        .then(json => {
-            if (json.error && json.error.message) {
-                throw new Error(json.error.message);
-            }
-            return json;
-        });
-};
-
-const fbMessage = (id, text) => {
-
-    if (scenarioCombos.trends.indexOf(text) >= 0 || scenarioCombos.disruptions.indexOf(text) >= 0) {
-
-        var body = JSON.stringify({
-            recipient: { id },
-            message: {
-                attachment: {
-                    "type": "image",
-                    "payload": {
-                        "url": text
-                    }
-                }
-            },
-        });
-
-
-    } else {
-        var body = JSON.stringify({
-            recipient: { id },
-            message: { text },
-        });
-    }
 
     const qs = 'access_token=' + encodeURIComponent(token);
     return fetch('https://graph.facebook.com/me/messages?' + qs, {
