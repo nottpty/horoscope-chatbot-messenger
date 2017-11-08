@@ -185,7 +185,7 @@ function sendTextMessage(sender, text) {
             "id": sender
         },
         "sender_action": "typing_on"
-    };
+    } + "";
 
     var options = {
         url: 'https://graph.facebook.com/v2.6/me/messages?access_token=' + token,
