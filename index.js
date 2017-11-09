@@ -207,7 +207,8 @@ function getUsername(sender) {
     console.log(stringURL);
     request({
         url: stringURL,
-        method: 'GET'
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' }
     }, function(error, response, body) {
         if (error) {
             console.log('Error sending messages: ', error)
