@@ -202,7 +202,6 @@ function sendTextMessage(sender, text) {
 }
 
 function getUsername(sender) {
-    console.log(tempUrl);
     request({
         url: 'https://graph.facebook.com/v2.6/' + sender + "?fields=first_name,last_name,profile_pic&access_token=" + token
     }, function(error, response, body) {
