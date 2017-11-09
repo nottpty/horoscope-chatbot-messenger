@@ -102,7 +102,8 @@ app.post('/webhook/', function(req, res) {
                 console.log(maxConfidence);
                 console.log(entities);
                 if (maxConfidence > 0.7 && entities === "greeting") {
-                    console.log(Object.keys(getUsername(sender)));
+                    console.log(sender);
+                    // console.log(Object.keys(getUsername(sender)));
                     send(sender, "สวัสดีครับ...คุณต้องการดูดวงกับเรามั้ย?")
                 } else if (maxConfidence > 0.7 && entities === "horoscope") {
                     send(sender, "งั้นก็ส่งวันเกิดของคุณมาเลย!!\n(เช่น 28 มิถุนายน 1996)\n*ปีเกิดขอเป็น ค.ศ. นะครับ*")
