@@ -102,9 +102,8 @@ app.post('/webhook/', function(req, res) {
                 console.log(maxConfidence);
                 console.log(entities);
                 if (maxConfidence > 0.7 && entities === "greeting") {
-                    console.log(sender);
-                    getUsername(sender);
-                    send(sender, "สวัสดีครับ...คุณต้องการดูดวงกับเรามั้ย?")
+                    let firstName = getUsername(sender)[Object.keys(getUsername(sender)[0])];
+                    send(sender, "สวัสดีครับคุณ " + firstname + " คุณต้องการดูดวงกับเรามั้ย?")
                 } else if (maxConfidence > 0.7 && entities === "horoscope") {
                     send(sender, "งั้นก็ส่งวันเกิดของคุณมาเลย!!\n(เช่น 28 มิถุนายน 1996)\n*ปีเกิดขอเป็น ค.ศ. นะครับ*")
                 } else if (maxConfidence > 0.7 && entities === "accept") {
@@ -203,10 +202,9 @@ function sendTextMessage(sender, text) {
 }
 
 function getUsername(sender) {
-    let tempUrl = 'https://graph.facebook.com/v2.6/' + sender + "?fields=first_name,last_name,profile_pic&access_token=" + token;
     console.log(tempUrl);
     request({
-        url: tempUrl
+        url: 'https://graph.facebook.com/v2.6/' + sender + "?fields=first_name,last_name,profile_pic&access_token=" + token
     }, function(error, response, body) {
         if (error) {
             console.log('Error sending messages: ', error)
