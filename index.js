@@ -204,10 +204,10 @@ function sendTextMessage(sender, text) {
 
 function getUsername(sender) {
     let stringURL = 'https://graph.facebook.com/v2.6/' + sender + "?fields=first_name,last_name,profile_pic&access_token=" + token
-    let coverStringURL = "'" + stringURL + "'";
-    console.log(coverStringURL);
+    console.log(stringURL);
     request({
-        url: coverStringURL
+        url: stringURL,
+        method: 'GET'
     }, function(error, response, body) {
         if (error) {
             console.log('Error sending messages: ', error)
