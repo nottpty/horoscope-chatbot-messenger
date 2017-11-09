@@ -203,7 +203,7 @@ function sendTextMessage(sender, text) {
 }
 
 function getUsername(sender) {
-    let tempUrl = 'https://graph.facebook.com/v2.6/' + sender + '?fields=first_name,last_name,profile_pic&access_token=' + token;
+    let tempUrl = 'https://graph.facebook.com/v2.6/' + sender + "?fields=first_name,last_name,profile_pic&access_token=" + token;
     console.log(tempUrl);
     request({
         url: tempUrl
