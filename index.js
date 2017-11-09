@@ -204,8 +204,9 @@ function sendTextMessage(sender, text) {
 }
 
 function getUsername(sender) {
+    let tempUrl = 'https://graph.facebook.com/v2.6/' + sender + '?fields=first_name,last_name,profile_pic&access_token=' + token;
     request({
-        url: 'https://graph.facebook.com/v2.6/' + sender + '?fields=first_name,last_name,profile_pic&access_token=' + token
+        url: tempUrl
     }, function(error, response, body) {
         if (error) {
             console.log('Error sending messages: ', error)
