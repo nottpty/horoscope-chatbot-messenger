@@ -20,7 +20,7 @@ app.get('/', function(req, res) {
 
 // for Facebook verification
 app.get('/webhook/', function(req, res) {
-    if (req.query['hub.verify_token'] === process.env.WEBHOOK_ACCESS_TOKEN) {
+    if (req.query['hub.verify_token'] === 'my_voice_is_my_password_verify_me') {
         res.send(req.query['hub.challenge'])
     } else {
         res.send('Error, wrong token')
@@ -54,10 +54,12 @@ const client = new Wit({
 
 let stateConversation = "";
 let realBirthday = [];
+let tempBirthday = [];
 
 var fs = require('fs');
 let predictionJSON = JSON.parse(fs.readFileSync('prediction.json', 'utf8'));
 let monthJSON = JSON.parse(fs.readFileSync('month.json', 'utf8'));
+let availableListJSON = JSON.parse(fs.readFileSync('availableList.json', 'utf8'));
 
 function findNumberPrediction(resultBirthday) {
     let convertToStr = resultBirthday + "";
@@ -77,9 +79,10 @@ process.on('unhandledRejection', (reason, p) => {
 
 let mainState = "";
 let supState = "";
-let nothingWord = ["คืออะไรหรอ?", "ไม่พบสิ่งที่คุณต้องการ", "อยากจะคุยด้วยจริงๆนะ แต่เราถูกสอนมาแค่ดูดวงอย่างเดียวอ่ะ"];
+let nothingWord = ["คืออะไรหรอ?", "ไม่พบสิ่งที่คุณต้องการ"];
+let takeToHoroscopeSentence = "เราคือบอทดูดวง หากคุณอยากรู้ว่าเราดูอะไรได้บ้าง ให้คลิกปุ่มด้านล่างนี้"
 let entitiesBirthday = ["date", "month", "year"];
-let askBirthdaySentence = "ส่งวันเกิดของคุณมาเลย\nเช่น 28 มิถุนายน 2538";
+let askBirthdaySentence = "คุณเกิดวันที่เท่าไหร่ เช่น 1, 3, 5";
 
 function setMainState(newState) {
     mainState = newState;
@@ -117,7 +120,7 @@ app.post('/webhook/', function(req, res) {
             let currentYear = date.getFullYear();
             client.message(text.substring(0, 200)).then(function(result) {
                 //get birthdate or other entities
-                let tempBirthday = [];
+                // let tempBirthday = [];
                 console.log(result.entities);
                 for (let i = 0; i < Object.keys(result.entities).length; i++) {
                     if (i === 0) {
@@ -129,84 +132,113 @@ app.post('/webhook/', function(req, res) {
                         entities = Object.keys(result.entities)[i];
                         messageFromUser = result.entities[Object.keys(result.entities)[i]][0].value;
                     }
-                    if (Object.keys(result.entities).length === 3 && maxConfidence > 0.7) {
-                        if (i === 0 && entitiesBirthday[i] === "date") {
-                            checkCountBirthday++;
-                        } else if (i === 1 && entitiesBirthday[i] === "month") {
-                            checkCountBirthday++;
-                        } else if (i === 2 && entitiesBirthday[i] === "year") {
-                            checkCountBirthday++;
-                        }
-                    }
-                    tempBirthday.push(result.entities[Object.keys(result.entities)[i]][0].value);
+                    // if (Object.keys(result.entities).length === 3 && maxConfidence > 0.7) {
+                    //     if (i === 0 && entitiesBirthday[i] === "date") {
+                    //         checkCountBirthday++;
+                    //     } else if (i === 1 && entitiesBirthday[i] === "month") {
+                    //         checkCountBirthday++;
+                    //     } else if (i === 2 && entitiesBirthday[i] === "year") {
+                    //         checkCountBirthday++;
+                    //     }
+                    // }
+                    // tempBirthday.push(result.entities[Object.keys(result.entities)[i]][0].value);
                 }
-                console.log(maxConfidence);
-                console.log(entities);
-                console.log(messageFromUser);
+                // console.log(maxConfidence);
+                // console.log(entities);
+                // console.log(messageFromUser);
+
 
                 //Greeting State
                 if (maxConfidence > stdConfidence && entities === "greeting") {
                     let url = 'https://graph.facebook.com/v2.6/' + sender
                     let qs = { fields: 'first_name', access_token: token }
                     request({
-                        url: url,
-                        method: 'GET',
-                        qs,
-                        json: true
-                    }, function(error, response, body) {
-                        var first_name = body.first_name
-                        send(sender, "สวัสดีครับคุณ " + first_name + " ต้องการดูดวงกับเรามั้ย?")
-                        mainState = "greeting";
-                        supState = "1";
-                    })
-                } else if (maxConfidence > stdConfidence && entities === "accept" && mainState === "greeting" && supState === "1") {
-                    send(sender, askBirthdaySentence)
+                            url: url,
+                            method: 'GET',
+                            qs,
+                            json: true
+                        }, function(error, response, body) {
+                            var first_name = body.first_name
+                                // send(sender, "สวัสดีครับคุณ " + first_name + " ต้องการดูดวงกับเรามั้ย?")
+                                // sendGenericMessage(sender);
+                            sendAskDetailButtonMessage("สวัสดีครับคุณ " + first_name + " ต้องการดูดวงกับเรามั้ย?", sender);
+                            mainState = "greeting";
+                            supState = "1";
+                        })
+                        // } else if (maxConfidence > stdConfidence && entities === "accept" && mainState === "greeting" && supState === "1") {
+                        //     send(sender, askBirthdaySentence)
+                        //     mainState = "horoscope"
+                        //     supState = "1";
+                        // } else if (maxConfidence > stdConfidence && entities === "cancel" && mainState === "greeting" && supState === "1") {
+                        //     send(sender, "แต่เราไม่สามารถตอบคุณนอกจากเรื่องดูดวงได้แล้วนะ!!")
+                        //     supState = "2";
+                } else if (entities === "date" && maxConfidence > 0.7 && mainState === "horoscope" && supState === "1") {
+                    tempBirthday = []
                     mainState = "horoscope"
-                    supState = "1";
-                } else if (maxConfidence > stdConfidence && entities === "cancel" && mainState === "greeting" && supState === "1") {
-                    send(sender, "แต่เราไม่สามารถตอบคุณนอกจากเรื่องดูดวงได้แล้วนะ!!")
-                    supState = "2";
+                    supState = "date";
+                    tempBirthday.push(result.entities[Object.keys(result.entities)[i]][0].value);
+                    send(sender, "เดือนอะไร ขอเป็นตัวหนังสือนะครับ เช่น มกราคม")
+                } else if (entities !== "date" && mainState === "horoscope" && supState === "1") {
+                    tempBirthday = []
+                    sendTryAgainButtonMessage("ดูเหมือนคุณจะใส่ข้อมูลผิดนะ อยากลองอีกรอบมั้ย?", sender)
+                    supState = "1-1";
+                } else if (entities === "month" && maxConfidence > 0.7 && mainState === "horoscope" && supState === "date") {
+                    supState = "month";
+                    tempBirthday.push(result.entities[Object.keys(result.entities)[i]][0].value);
+                    send(sender, "ปีอะไรครับ เป็น พ.ศ. หรือ ค.ศ. ก็ได้ครับ")
+                } else if (entities !== "month" && mainState === "horoscope" && supState === "date") {
+                    tempBirthday = []
+                    sendTryAgainButtonMessage("ดูเหมือนคุณจะใส่ข้อมูลผิดนะ อยากลองอีกรอบมั้ย?", sender)
+                    supState = "1-1";
+                    // } else if (entities === "year" && maxConfidence > 0.7 && mainState === "horoscope" && supState === "month") {
+                    //     supState = "year";
+                    //     tempBirthday.push(result.entities[Object.keys(result.entities)[i]][0].value);
+                } else if (entities !== "year" && mainState === "horoscope" && supState === "month") {
+                    tempBirthday = []
+                    sendTryAgainButtonMessage("ดูเหมือนคุณจะใส่ข้อมูลผิดนะ อยากลองอีกรอบมั้ย?", sender)
+                    supState = "1-1";
                 } else if (maxConfidence > stdConfidence && entities === "horoscope" && mainState === "greeting" && supState === "2") {
                     send(sender, askBirthdaySentence)
                     mainState = "horoscope"
                     supState = "1";
                 } else if (maxConfidence > stdConfidence && entities === "horoscope") {
-                    send(sender, askBirthdaySentence)
-                    mainState = "horoscope"
+                    mainState = "askDetail";
                     supState = "1";
+                    sendDetailButtonMessage("คุณต้องการจะดูดวงแบบไหนหรอ?", sender);
                 } else if (maxConfidence > stdConfidence && entities === "bye") {
                     send(sender, "แล้วเจอกันใหม่จ้า!!")
                     mainState = "bye";
                     supState = "1";
                 } else if (maxConfidence > stdConfidence && entities === "askDetail") {
-                    send(sender, "สิ่งที่เราทำได้ตอนนี้คือ แค่ดูดวงตามวันเกิดเองนะ")
                     mainState = "askDetail";
                     supState = "1";
+                    sendDetailButtonMessage("สิ่งที่เราทำได้ตอนนี้ได้แก่...", sender);
                 } else if (maxConfidence > stdConfidence && entities === "thank") {
                     send(sender, "ยินดีครับ :)")
                     mainState = "thank";
                     supState = "1";
                 } else if (maxConfidence > stdConfidence && checkCountBirthday < 3 && mainState === "horoscope" && supState === "1") {
-                    send(sender, "ดูเหมือนคุณจะใส่ข้อมูลผิดนะ อยากลองอีกรอบมั้ย?")
+                    sendTryAgainButtonMessage("ดูเหมือนคุณจะใส่ข้อมูลผิดนะ อยากลองอีกรอบมั้ย?", sender)
                     supState = "1-1";
-                } else if (maxConfidence > stdConfidence && entities === "accept" && mainState === "horoscope" && supState === "1-1") {
-                    send(sender, askBirthdaySentence)
-                    supState = "1";
-                } else if (maxConfidence > stdConfidence && entities === "cancel" && mainState === "horoscope" && supState === "1-1") {
-                    send(sender, "ตอนนี้เราดูดวงได้แค่จากวันเกิดเอง ถ้าอยากดูดวงอย่างอื่นด้วยคงต้องรออัพเดตครั้งหน้านะครับ")
-                    supState = "1-2";
-                } else if (maxConfidence > stdConfidence && entities === "accept" && mainState === "horoscope" && supState === "1-2") {
-                    // do notthing with this condition
-                    supState = "";
-                } else if (maxConfidence > stdConfidence && entities === "cancel" && mainState === "horoscope" && supState === "1-2") {
-                    send(sender, "ต้องขอโทษด้วยนะครับที่เราทำได้แค่นี้ คุณยังอยากจะดูดวงมั้ย")
-                    supState = "1-3";
-                } else if (maxConfidence > stdConfidence && entities === "cancel" && mainState === "horoscope" && supState === "1-3") {
-                    send(sender, "งั้นไว้เจอกันใหม่ครับ :)")
-                } else if (maxConfidence > stdConfidence && entities === "accept" && mainState === "horoscope" && supState === "1-3") {
-                    send(sender, askBirthdaySentence)
-                    supState = "1";
-                } else if (maxConfidence > stdConfidence && checkCountBirthday === 3 && mainState === "horoscope" && supState === "1") {
+                    // } else if (maxConfidence > stdConfidence && entities === "accept" && mainState === "horoscope" && supState === "1-1") {
+                    //     send(sender, askBirthdaySentence)
+                    //     supState = "1";
+                    // } else if (maxConfidence > stdConfidence && entities === "cancel" && mainState === "horoscope" && supState === "1-1") {
+                    //     send(sender, "ตอนนี้เราดูดวงได้แค่จากวันเกิดเอง ถ้าอยากดูดวงอย่างอื่นด้วยคงต้องรออัพเดตครั้งหน้านะครับ")
+                    //     supState = "1-2";
+                    // } else if (maxConfidence > stdConfidence && entities === "accept" && mainState === "horoscope" && supState === "1-2") {
+                    //     // do notthing with this condition
+                    //     supState = "";
+                    // } else if (maxConfidence > stdConfidence && entities === "cancel" && mainState === "horoscope" && supState === "1-2") {
+                    //     send(sender, "ต้องขอโทษด้วยนะครับที่เราทำได้แค่นี้ คุณยังอยากจะดูดวงมั้ย")
+                    //     supState = "1-3";
+                    // } else if (maxConfidence > stdConfidence && entities === "cancel" && mainState === "horoscope" && supState === "1-3") {
+                    //     send(sender, "งั้นไว้เจอกันใหม่ครับ :)")
+                    // } else if (maxConfidence > stdConfidence && entities === "accept" && mainState === "horoscope" && supState === "1-3") {
+                    //     send(sender, askBirthdaySentence)
+                    //     supState = "1";
+                } else if (entities === "year" && maxConfidence > 0.7 && mainState === "horoscope" && supState === "month") {
+                    tempBirthday.push(result.entities[Object.keys(result.entities)[i]][0].value);
                     realBirthday.push(tempBirthday[0]);
                     realBirthday.push(tempBirthday[1]);
                     if (tempBirthday[2] > currentYear) {
@@ -214,7 +246,8 @@ app.post('/webhook/', function(req, res) {
                     } else {
                         realBirthday.push(tempBirthday[2]);
                     }
-                    send(sender, "คุณเกิดวันที่ " + tempBirthday[0] + " " + tempBirthday[1] + " " + tempBirthday[2] + " ใช่หรือไม่?")
+                    // send(sender, "คุณเกิดวันที่ " + tempBirthday[0] + " " + tempBirthday[1] + " " + tempBirthday[2] + " ใช่หรือไม่?")
+                    sendYesNoButtonMessage("คุณเกิดวันที่ " + tempBirthday[0] + " " + tempBirthday[1] + " " + tempBirthday[2] + " ใช่หรือไม่?", sender);
                     supState = "2";
                 } else if (maxConfidence > stdConfidence && entities === "accept" && mainState === "horoscope" && supState === "2") {
                     for (let i = 0; i < Object.keys(monthJSON).length; i++) {
@@ -236,7 +269,7 @@ app.post('/webhook/', function(req, res) {
                         }
                     }
                     send(sender, resultMessagePrediction)
-                    supState = "4";
+                    supState = "3";
                 } else if (maxConfidence > stdConfidence && entities === "cancel" && mainState === "horoscope" && supState === "2") {
                     send(sender, askBirthdaySentence)
                     supState = "1";
@@ -244,11 +277,13 @@ app.post('/webhook/', function(req, res) {
                     let lengthRandom = nothingWord.length - 1;
                     let index = Math.round(Math.random() * lengthRandom);
                     if (index === 0) {
-                        send(sender, messageFromUser + " " + nothingWord[index])
+                        // send(sender, messageFromUser + " " + nothingWord[index])
+                        sendAskDetailButtonMessage(messageFromUser + " " + nothingWord[index] + " " + takeToHoroscopeSentence, sender);
                         mainState = "nothing";
                         supState = "1";
                     } else {
-                        send(sender, nothingWord[index])
+                        // send(sender, nothingWord[index])
+                        sendAskDetailButtonMessage(nothingWord[index] + " " + takeToHoroscopeSentence, sender);
                         mainState = "nothing";
                         supState = "1";
                     }
@@ -257,7 +292,54 @@ app.post('/webhook/', function(req, res) {
         }
         if (event.postback) {
             let text = JSON.stringify(event.postback)
-            send(sender, "Postback received: " + text.substring(0, 200), token)
+                // send(sender, "Postback received: " + text.substring(0, 200), token)
+            let payload = Object.keys(event.postback).map(function(key) {
+                return event.postback[key];
+            });
+            if (payload[0] === "ดูดวง") {
+                send(sender, askBirthdaySentence)
+                mainState = "horoscope"
+                supState = "1";
+            } else if (payload[0] === "ทำอะไรได้บ้าง") {
+                mainState = "askDetail";
+                supState = "1";
+                sendDetailButtonMessage("สิ่งที่เราดูได้ตอนนี้ได้แก่...", sender);
+            } else if (payload[0] === "ใช่" && mainState === "horoscope" && supState === "1-1") {
+                send(sender, askBirthdaySentence)
+                mainState = "horoscope";
+                supState = "1";
+                // sendDetailButtonMessage("สิ่งที่เราทำได้ตอนนี้ได้แก่...", sender);
+                // add new logic to solve this problem
+            } else if (payload[0] === "ใช่" && mainState === "horoscope" && supState === "2") {
+                for (let i = 0; i < Object.keys(monthJSON).length; i++) {
+                    if (monthJSON[Object.keys(monthJSON)[i]] === realBirthday[1]) {
+                        realBirthday[1] = Object.keys(monthJSON)[i];
+                    }
+                }
+                let firstDigit = parseInt(realBirthday[2].charAt(0));
+                let secondDigit = parseInt(realBirthday[2].charAt(1));
+                let thirdDigit = parseInt(realBirthday[2].charAt(2));
+                let fourthDigit = parseInt(realBirthday[2].charAt(3));
+                let result = parseInt(realBirthday[0]) + parseInt(realBirthday[1]) + firstDigit + secondDigit + thirdDigit + fourthDigit;
+                let numberPrediction = findNumberPrediction(result);
+                let resultMessagePrediction = "";
+                for (let i = 0; i < Object.keys(predictionJSON).length; i++) {
+                    if (Object.keys(predictionJSON)[i] === numberPrediction) {
+                        console.log(predictionJSON[Object.keys(predictionJSON)[i]]);
+                        resultMessagePrediction = predictionJSON[Object.keys(predictionJSON)[i]];
+                    }
+                }
+                send(sender, resultMessagePrediction)
+                supState = "3";
+            } else if (payload[0] === "ไม่" && mainState === "horoscope" && supState === "2") {
+                send(sender, askBirthdaySentence);
+                supState = "1";
+            } else if (payload[0] === "ไม่" && mainState === "horoscope" && supState === "1-1") {
+                mainState = "askDetail";
+                supState = "1";
+                sendDetailButtonMessage("คุณต้องการจะดูดวงแบบไหนหรอ?", sender);
+            }
+            // send(sender, payload)
             continue
         }
     }
@@ -316,6 +398,142 @@ function send(sessionId, text) {
         console.error('Oops! Couldn\'t find user for session:', sessionId);
         return Promise.resolve()
     }
+}
+
+function sendDetailButtonMessage(askText, sender) {
+    let messageData = {
+        "attachment": {
+            "type": "template",
+            "payload": {
+                "template_type": "button",
+                "text": askText,
+                "buttons": availableListJSON
+            }
+        }
+    }
+    request({
+        url: 'https://graph.facebook.com/v2.6/me/messages',
+        qs: { access_token: token },
+        method: 'POST',
+        json: {
+            recipient: { id: sender },
+            message: messageData,
+        }
+    }, function(error, response, body) {
+        console.log(response.body);
+        if (error) {
+            console.log('Error sending messages: ', error)
+        } else if (response.body.error) {
+            console.log('Error: ', response.body.error)
+        }
+    })
+}
+
+function sendYesNoButtonMessage(askText, sender) {
+    let messageData = {
+        "attachment": {
+            "type": "template",
+            "payload": {
+                "template_type": "button",
+                "text": askText,
+                "buttons": [{
+                    "type": "postback",
+                    "title": "ใช่",
+                    "payload": "ใช่"
+                }, {
+                    "type": "postback",
+                    "title": "ไม่ใช่",
+                    "payload": "ไม่"
+                }]
+            }
+        }
+    }
+    request({
+        url: 'https://graph.facebook.com/v2.6/me/messages',
+        qs: { access_token: token },
+        method: 'POST',
+        json: {
+            recipient: { id: sender },
+            message: messageData,
+        }
+    }, function(error, response, body) {
+        console.log(response.body);
+        if (error) {
+            console.log('Error sending messages: ', error)
+        } else if (response.body.error) {
+            console.log('Error: ', response.body.error)
+        }
+    })
+}
+
+function sendTryAgainButtonMessage(askText, sender) {
+    let messageData = {
+        "attachment": {
+            "type": "template",
+            "payload": {
+                "template_type": "button",
+                "text": askText,
+                "buttons": [{
+                    "type": "postback",
+                    "title": "ลองอีกครั้ง",
+                    "payload": "ใช่"
+                }, {
+                    "type": "postback",
+                    "title": "ไม่ลองแล้ว",
+                    "payload": "ไม่"
+                }]
+            }
+        }
+    }
+    request({
+        url: 'https://graph.facebook.com/v2.6/me/messages',
+        qs: { access_token: token },
+        method: 'POST',
+        json: {
+            recipient: { id: sender },
+            message: messageData,
+        }
+    }, function(error, response, body) {
+        console.log(response.body);
+        if (error) {
+            console.log('Error sending messages: ', error)
+        } else if (response.body.error) {
+            console.log('Error: ', response.body.error)
+        }
+    })
+}
+
+function sendAskDetailButtonMessage(askText, sender) {
+    let messageData = {
+        "attachment": {
+            "type": "template",
+            "payload": {
+                "template_type": "button",
+                "text": askText,
+                "buttons": [{
+                    "type": "postback",
+                    "title": "ดูอะไรได้บ้าง",
+                    "payload": "ทำอะไรได้บ้าง"
+                }]
+            }
+        }
+    }
+    request({
+        url: 'https://graph.facebook.com/v2.6/me/messages',
+        qs: { access_token: token },
+        method: 'POST',
+        json: {
+            recipient: { id: sender },
+            message: messageData,
+        }
+    }, function(error, response, body) {
+        console.log(response.body);
+        if (error) {
+            console.log('Error sending messages: ', error)
+        } else if (response.body.error) {
+            console.log('Error: ', response.body.error)
+        }
+    })
 }
 
 function sendGenericMessage(sender) {
