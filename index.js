@@ -257,7 +257,7 @@ app.post('/webhook/', function(req, res) {
                     }
                     if (realBirthday[1] === undefined || realBirthday[1] === null) {
                         tempBirthday = []
-                        sendTryAgainButtonMessage("ดูเหมือนคุณจะใส่ข้อมูลผิดนะ อยากลองอีกรอบมั้ย?", sender)
+                        sendTryAgainButtonMessage("ดูเหมือนคุณจะใส่เดือนผิดนะ อยากลองอีกรอบมั้ย?", sender)
                         supState = "1-1";
                     } else {
                         let firstDigit = parseInt(realBirthday[2].charAt(0));
