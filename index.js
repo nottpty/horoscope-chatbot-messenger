@@ -255,21 +255,27 @@ app.post('/webhook/', function(req, res) {
                             realBirthday[1] = Object.keys(monthJSON)[i];
                         }
                     }
-                    let firstDigit = parseInt(realBirthday[2].charAt(0));
-                    let secondDigit = parseInt(realBirthday[2].charAt(1));
-                    let thirdDigit = parseInt(realBirthday[2].charAt(2));
-                    let fourthDigit = parseInt(realBirthday[2].charAt(3));
-                    let result = parseInt(realBirthday[0]) + parseInt(realBirthday[1]) + firstDigit + secondDigit + thirdDigit + fourthDigit;
-                    let numberPrediction = findNumberPrediction(result);
-                    let resultMessagePrediction = "";
-                    for (let i = 0; i < Object.keys(predictionJSON).length; i++) {
-                        if (Object.keys(predictionJSON)[i] === numberPrediction) {
-                            console.log(predictionJSON[Object.keys(predictionJSON)[i]]);
-                            resultMessagePrediction = predictionJSON[Object.keys(predictionJSON)[i]];
+                    if (realBirthday[1] === undefined || realBirthday[1] === null) {
+                        tempBirthday = []
+                        sendTryAgainButtonMessage("ดูเหมือนคุณจะใส่ข้อมูลผิดนะ อยากลองอีกรอบมั้ย?", sender)
+                        supState = "1-1";
+                    } else {
+                        let firstDigit = parseInt(realBirthday[2].charAt(0));
+                        let secondDigit = parseInt(realBirthday[2].charAt(1));
+                        let thirdDigit = parseInt(realBirthday[2].charAt(2));
+                        let fourthDigit = parseInt(realBirthday[2].charAt(3));
+                        let result = parseInt(realBirthday[0]) + parseInt(realBirthday[1]) + firstDigit + secondDigit + thirdDigit + fourthDigit;
+                        let numberPrediction = findNumberPrediction(result);
+                        let resultMessagePrediction = "";
+                        for (let i = 0; i < Object.keys(predictionJSON).length; i++) {
+                            if (Object.keys(predictionJSON)[i] === numberPrediction) {
+                                console.log(predictionJSON[Object.keys(predictionJSON)[i]]);
+                                resultMessagePrediction = predictionJSON[Object.keys(predictionJSON)[i]];
+                            }
                         }
+                        send(sender, resultMessagePrediction)
+                        supState = "3";
                     }
-                    send(sender, resultMessagePrediction)
-                    supState = "3";
                 } else if (maxConfidence > stdConfidence && entities === "cancel" && mainState === "horoscope" && supState === "2") {
                     send(sender, askBirthdaySentence)
                     supState = "1";
