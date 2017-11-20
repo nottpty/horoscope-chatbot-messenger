@@ -4,6 +4,7 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const request = require('request')
 const app = express()
+const stringSimilarity = require('string-similarity');
 
 app.set('port', (process.env.PORT || 5000))
 
@@ -89,6 +90,7 @@ let askBirthdaySentence = "คุณเกิดวันที่เท่า�
 let askMonth = "เดือนอะไร ขอเป็นตัวหนังสือนะครับ เช่น มกราคม";
 let askYear = "ปีอะไรครับ เป็น พ.ศ. หรือ ค.ศ. ก็ได้ครับ";
 let dateArr = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31"];
+let monthArr = ['มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม', ];
 
 app.post('/webhook/', function(req, res) {
     let messaging_events = req.body.entry[0].messaging
@@ -156,10 +158,10 @@ app.post('/webhook/', function(req, res) {
                         supState = "1";
                     })
                 } else if (entities === "date" && maxConfidence > 0.8 && mainState === "doBirthday" && supState === "1") {
-                    if (parseInt(result.entities[Object.keys(result.entities)[i]][0].value) > 0 && parseInt(result.entities[Object.keys(result.entities)[i]][0].value) < 32) {
+                    if (parseInt(messageFromUser) > 0 && parseInt(messageFromUser) < 32) {
                         tempBirthday = []
                         supState = "date";
-                        tempBirthday.push(result.entities[Object.keys(result.entities)[i]][0].value);
+                        tempBirthday.push(messageFromUser);
                         send(sender, askMonth)
                     } else {
                         sendTryAgainButtonMessage("ดูเหมือนคุณจะใส่วันผิดนะ อยากลองอีกรอบมั้ย?", sender)
@@ -173,11 +175,30 @@ app.post('/webhook/', function(req, res) {
                     supState = "1";
                 } else if (entities === "month" && maxConfidence > 0.8 && mainState === "doBirthday" && supState === "date") {
                     supState = "month";
-                    tempBirthday.push(result.entities[Object.keys(result.entities)[i]][0].value);
+                    tempBirthday.push(messageFromUser);
                     send(sender, askYear)
                 } else if (entities === "month" && maxConfidence < 0.8 && mainState === "doBirthday" && supState === "date") {
-                    sendTryAgainButtonMessage("ดูเหมือนคุณจะใส่เดือนผิดนะ โปรดลองอีกครั้งหรือกลับไปเมนูหลัก", sender)
-                    supState = "date";
+                    let tempIndex = 0;
+                    let rating = 0.0;
+                    for (let i = 0; i < monthArr.length; i++) {
+                        let similarity = stringSimilarity.compareTwoStrings(messageFromUser, monthArr[i]);
+                        if (i === 0) {
+                            tempIndex = i
+                            rating = similarity
+                        } else if (similarity > rating) {
+                            rating = similarity
+                            tempIndex = i;
+                        }
+                    }
+                    console.log(rating)
+                    if (rating > 0.7) {
+                        supState = "month";
+                        tempBirthday.push(monthArr[tempIndex]);
+                        send(sender, askYear)
+                    } else {
+                        sendTryAgainButtonMessage("ดูเหมือนคุณจะใส่เดือนผิดนะ โปรดลองอีกครั้งหรือกลับไปเมนูหลัก", sender)
+                        supState = "date";
+                    }
                 } else if (entities !== "month" && mainState === "doBirthday" && supState === "date") {
                     sendTryAgainButtonMessage("ดูเหมือนคุณจะใส่เดือนผิดนะ โปรดลองอีกครั้งหรือกลับไปเมนูหลัก", sender)
                     supState = "date";
@@ -197,8 +218,8 @@ app.post('/webhook/', function(req, res) {
                     send(sender, "ยินดีครับ :)")
                     mainState = "thank";
                     supState = "1";
-                } else if (((entities === "year" && maxConfidence > 0.8) || (result.entities[Object.keys(result.entities)[i]][0].value > 1000 && result.entities[Object.keys(result.entities)[i]][0].value <= currentYear + 543)) && mainState === "doBirthday" && supState === "month") {
-                    tempBirthday.push(result.entities[Object.keys(result.entities)[i]][0].value);
+                } else if (((entities === "year" && maxConfidence > 0.8) || (messageFromUser > 1000 && messageFromUser <= currentYear + 543)) && mainState === "doBirthday" && supState === "month") {
+                    tempBirthday.push(messageFromUser);
                     realBirthday.push(tempBirthday[0]);
                     realBirthday.push(tempBirthday[1]);
                     if (tempBirthday[2] > currentYear) {

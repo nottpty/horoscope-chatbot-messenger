@@ -12,6 +12,7 @@
     "body-parser": "^1.18.2",
     "express": "^4.16.2",
     "node-wit": "^4.3.0",
-    "request": "^2.83.0"
+    "request": "^2.83.0",
+    "string-similarity": "^1.2.0"
   }
 }
