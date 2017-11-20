@@ -38,23 +38,6 @@ const client = new Wit({
 const token = process.env.FB_PAGE_ACCESS_TOKEN;
 // const token = 'EAACjWLHUVZAoBABQlUfgvr7VP2FMLOF1bDBffcN9FZBN3ml5nRh72dS9nZBQ32yNfhiyWbymseRWtGlTzLiZBwZCG3SWYcDR51tZAaudv60t4kggD7hJhB1dlx7ZCqt84VyfsKxtnyC6gTnVU2NI09q5my0zrSgOrToXtKkZBEWNAwZDZD';
 
-// client.message('สวัสดีจ้าา').then(function(result) {
-//     let maxConfidence = 0;
-//     let entities = "";
-//     for (let i = 0; i < Object.keys(result.entities).length; i++) {
-//         if (i === 0) {
-//             maxConfidence = result.entities[Object.keys(result.entities)[i]][0].confidence;
-//             entities = Object.keys(result.entities)[i];
-//         } else if (result.entities[Object.keys(result.entities)[i]][0].confidence > maxConfidence) {
-//             maxConfidence = result.entities[Object.keys(result.entities)[i]][0].confidence;
-//             entities = Object.keys(result.entities)[i];
-//         }
-//     }
-//     console.log(maxConfidence);
-//     console.log(entities);
-//     // console.log(Object.keys(result.entities).length) //will log results.
-// })
-
 let stateConversation = "";
 let realBirthday = [];
 let tempBirthday = [];
@@ -191,7 +174,7 @@ app.post('/webhook/', function(req, res) {
                         }
                     }
                     console.log(rating)
-                    if (rating > 0.7) {
+                    if (rating > 0.6) {
                         supState = "month";
                         tempBirthday.push(monthArr[tempIndex]);
                         send(sender, askYear)
@@ -200,8 +183,27 @@ app.post('/webhook/', function(req, res) {
                         supState = "date";
                     }
                 } else if (entities !== "month" && mainState === "doBirthday" && supState === "date") {
-                    sendTryAgainButtonMessage("ดูเหมือนคุณจะใส่เดือนผิดนะ โปรดลองอีกครั้งหรือกลับไปเมนูหลัก", sender)
-                    supState = "date";
+                    let tempIndex = 0;
+                    let rating = 0.0;
+                    for (let i = 0; i < monthArr.length; i++) {
+                        let similarity = stringSimilarity.compareTwoStrings(messageFromUser, monthArr[i]);
+                        if (i === 0) {
+                            tempIndex = i
+                            rating = similarity
+                        } else if (similarity > rating) {
+                            rating = similarity
+                            tempIndex = i;
+                        }
+                    }
+                    console.log(rating)
+                    if (rating > 0.6) {
+                        supState = "month";
+                        tempBirthday.push(monthArr[tempIndex]);
+                        send(sender, askYear)
+                    } else {
+                        sendTryAgainButtonMessage("ดูเหมือนคุณจะใส่เดือนผิดนะ โปรดลองอีกครั้งหรือกลับไปเมนูหลัก", sender)
+                        supState = "date";
+                    }
                 } else if (maxConfidence > stdConfidence && entities === "horoscope") {
                     mainState = "askDetail";
                     supState = "1";
@@ -255,8 +257,10 @@ app.post('/webhook/', function(req, res) {
                             resultMessagePrediction = predictionJSON[Object.keys(predictionJSON)[i]];
                         }
                     }
-                    send(sender, resultMessagePrediction)
-                    supState = "3";
+                    // send(sender, resultMessagePrediction)
+                    // mainState = "askDetail";
+                    // supState = "1";
+                    sendTryAgainButtonMessage(resultMessagePrediction, sender)
                 } else if (maxConfidence > stdConfidence && entities === "cancel" && mainState === "doBirthday" && supState === "2") {
                     send(sender, askBirthdaySentence)
                     supState = "1";
@@ -290,7 +294,7 @@ app.post('/webhook/', function(req, res) {
             } else if (payload[0] === "สุ่มเซียมซี") {
                 let randomN = Math.round(Math.random() * Object.keys(fortuneStickJSON).length);
                 let answer = fortuneStickJSON[Object.keys(fortuneStickJSON)[randomN]];
-                send(sender, answer);
+                sendTryAgainButtonMessage(answer, sender)
             } else if (payload[0] === "เซียมซี") {
                 send(sender, sendRandomFortuneSticksMessage("ก่อนกดสุ่มอย่าลืมอธิษฐานด้วยนะครับ", sender))
                 mainState = "doFortunesticks"
@@ -324,8 +328,7 @@ app.post('/webhook/', function(req, res) {
                         resultMessagePrediction = predictionJSON[Object.keys(predictionJSON)[i]];
                     }
                 }
-                send(sender, resultMessagePrediction)
-                supState = "3";
+                sendTryAgainButtonMessage(resultMessagePrediction, sender)
             } else if (payload[0] === "ไม่" && mainState === "doBirthday" && supState === "2") {
                 send(sender, askBirthdaySentence);
                 supState = "1";
