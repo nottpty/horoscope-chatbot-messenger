@@ -1,5 +1,9 @@
 [{
     "type": "postback",
     "title": "ดูดวงตามวันเกิด",
-    "payload": "ดูดวง"
+    "payload": "วันเกิด"
+}, {
+    "type": "postback",
+    "title": "เสี่ยงเซียมซี",
+    "payload": "เซียมซี"
 }]
