@@ -304,6 +304,7 @@ app.post('/webhook/', function(req, res) {
                     }
                 }
                 console.log(numberCardArr)
+                send(sender, "คุณสามารถกดเลื่อนซ้ายขวาเพื่อเลื่อนไปเลือกไพ่ใบอื่นได้")
                 sendTarotPack(numberCardArr, "https://pre00.deviantart.net/2379/th/pre/i/2011/206/c/e/tarot_card_backside_by_willawanda-d41l36o.jpg", sender)
             } else if (payload[0] >= 0 && payload[0] <= 21 && mainState === "doTarot") {
                 let indexCard = payload[0];
