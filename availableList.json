@@ -6,4 +6,8 @@
     "type": "postback",
     "title": "เสี่ยงเซียมซี",
     "payload": "เซียมซี"
+}, {
+    "type": "postback",
+    "title": "ไพ่ทาโร่ใบเดียว",
+    "payload": "ไพ่ทาโร่"
 }]

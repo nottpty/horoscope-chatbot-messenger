@@ -47,6 +47,7 @@ let predictionJSON = JSON.parse(fs.readFileSync('prediction.json', 'utf8'));
 let monthJSON = JSON.parse(fs.readFileSync('month.json', 'utf8'));
 let availableListJSON = JSON.parse(fs.readFileSync('availableList.json', 'utf8'));
 let fortuneStickJSON = JSON.parse(fs.readFileSync('fortuneSticks.json', 'utf8'));
+let tarotJSON = JSON.parse(fs.readFileSync('tarot.json', 'utf8'));
 
 function findNumberPrediction(resultBirthday) {
     let convertToStr = resultBirthday + "";
@@ -291,6 +292,26 @@ app.post('/webhook/', function(req, res) {
                 send(sender, askBirthdaySentence)
                 mainState = "doBirthday"
                 supState = "1";
+            } else if (payload[0] === "ไพ่ทาโร่") {
+                mainState = "doTarot"
+                supState = "1";
+                let numberCardArr = [];
+                let amount = 10;
+                while (numberCardArr.length < amount) {
+                    let randomNum = Math.round(Math.random() * (Object.keys(tarotJSON).length - 1));
+                    if (numberCardArr.indexOf(randomNum.toString()) < 0) {
+                        numberCardArr.push(randomNum.toString())
+                    }
+                }
+                console.log(numberCardArr)
+                sendTarotPack(numberCardArr, "https://pre00.deviantart.net/2379/th/pre/i/2011/206/c/e/tarot_card_backside_by_willawanda-d41l36o.jpg", sender)
+            } else if (payload[0] >= 0 && payload[0] <= 21 && mainState === "doTarot") {
+                let indexCard = payload[0];
+                let objectCard = tarotJSON[Object.keys(tarotJSON)[indexCard]];
+                let answer = objectCard[Object.keys(objectCard)[0]];
+                let image_url = objectCard[Object.keys(objectCard)[1]];
+                sendImage(image_url, sender)
+                sendTryAgainButtonMessage(answer, sender)
             } else if (payload[0] === "สุ่มเซียมซี") {
                 let randomN = Math.round(Math.random() * Object.keys(fortuneStickJSON).length);
                 let answer = fortuneStickJSON[Object.keys(fortuneStickJSON)[randomN]];
@@ -570,6 +591,150 @@ function sendAskDetailButtonMessage(askText, sender) {
         }
     }, function(error, response, body) {
         console.log(response.body);
+        if (error) {
+            console.log('Error sending messages: ', error)
+        } else if (response.body.error) {
+            console.log('Error: ', response.body.error)
+        }
+    })
+}
+
+function sendImage(image_url, sender) {
+    let messageData = {
+        "attachment": {
+            "type": "image",
+            "payload": {
+                "is_reusable": true,
+                "url": image_url
+            }
+        }
+    }
+    request({
+        url: 'https://graph.facebook.com/v2.6/me/messages',
+        qs: { access_token: token },
+        method: 'POST',
+        json: {
+            recipient: { id: sender },
+            message: messageData,
+        }
+    }, function(error, response, body) {
+        if (error) {
+            console.log('Error sending messages: ', error)
+        } else if (response.body.error) {
+            console.log('Error: ', response.body.error)
+        }
+    });
+}
+
+function sendTarotPack(numberCardArr, backgroundCardImageURL, sender) {
+    let messageData = {
+        "attachment": {
+            "type": "template",
+            "payload": {
+                "template_type": "generic",
+                "elements": [{
+                    "title": "ใบที่ 1",
+                    "subtitle": "ใบที่ 1 จากทั้งหมด 10 ใบ",
+                    "image_url": backgroundCardImageURL,
+                    "buttons": [{
+                        "type": "postback",
+                        "title": "เลือกใบนี้",
+                        "payload": numberCardArr[0],
+                    }],
+                }, {
+                    "title": "ใบที่ 2",
+                    "subtitle": "ใบที่ 2 จากทั้งหมด 10 ใบ",
+                    "image_url": backgroundCardImageURL,
+                    "buttons": [{
+                        "type": "postback",
+                        "title": "เลือกใบนี้",
+                        "payload": numberCardArr[1],
+                    }],
+                }, {
+                    "title": "ใบที่ 3",
+                    "subtitle": "ใบที่ 3 จากทั้งหมด 10 ใบ",
+                    "image_url": backgroundCardImageURL,
+                    "buttons": [{
+                        "type": "postback",
+                        "title": "เลือกใบนี้",
+                        "payload": numberCardArr[2],
+                    }],
+                }, {
+                    "title": "ใบที่ 4",
+                    "subtitle": "ใบที่ 4 จากทั้งหมด 10 ใบ",
+                    "image_url": backgroundCardImageURL,
+                    "buttons": [{
+                        "type": "postback",
+                        "title": "เลือกใบนี้",
+                        "payload": numberCardArr[3],
+                    }],
+                }, {
+                    "title": "ใบที่ 5",
+                    "subtitle": "ใบที่ 5 จากทั้งหมด 10 ใบ",
+                    "image_url": backgroundCardImageURL,
+                    "buttons": [{
+                        "type": "postback",
+                        "title": "เลือกใบนี้",
+                        "payload": numberCardArr[4],
+                    }],
+                }, {
+                    "title": "ใบที่ 6",
+                    "subtitle": "ใบที่ 6 จากทั้งหมด 10 ใบ",
+                    "image_url": backgroundCardImageURL,
+                    "buttons": [{
+                        "type": "postback",
+                        "title": "เลือกใบนี้",
+                        "payload": numberCardArr[5],
+                    }],
+                }, {
+                    "title": "ใบที่ 7",
+                    "subtitle": "ใบที่ 7 จากทั้งหมด 10 ใบ",
+                    "image_url": backgroundCardImageURL,
+                    "buttons": [{
+                        "type": "postback",
+                        "title": "เลือกใบนี้",
+                        "payload": numberCardArr[6],
+                    }],
+                }, {
+                    "title": "ใบที่ 8",
+                    "subtitle": "ใบที่ 8 จากทั้งหมด 10 ใบ",
+                    "image_url": backgroundCardImageURL,
+                    "buttons": [{
+                        "type": "postback",
+                        "title": "เลือกใบนี้",
+                        "payload": numberCardArr[7],
+                    }],
+                }, {
+                    "title": "ใบที่ 9",
+                    "subtitle": "ใบที่ 9 จากทั้งหมด 10 ใบ",
+                    "image_url": backgroundCardImageURL,
+                    "buttons": [{
+                        "type": "postback",
+                        "title": "เลือกใบนี้",
+                        "payload": numberCardArr[8],
+                    }],
+                }, {
+                    "title": "ใบที่ 10",
+                    "subtitle": "ใบที่ 10 จากทั้งหมด 10 ใบ",
+                    "image_url": backgroundCardImageURL,
+                    "buttons": [{
+                        "type": "postback",
+                        "title": "เลือกใบนี้",
+                        "payload": numberCardArr[9],
+                    }],
+                }]
+            }
+        }
+    }
+    request({
+        url: 'https://graph.facebook.com/v2.6/me/messages',
+        qs: { access_token: token },
+        method: 'POST',
+        json: {
+            recipient: { id: sender },
+            message: messageData,
+        }
+    }, function(error, response, body) {
         if (error) {
             console.log('Error sending messages: ', error)
         } else if (response.body.error) {
