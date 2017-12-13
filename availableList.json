@@ -1,6 +1,6 @@
 [{
     "type": "postback",
-    "title": "ดูดวงตามวันเกิด",
+    "title": "ตามวันเกิด",
     "payload": "วันเกิด"
 }, {
     "type": "postback",

@@ -83,10 +83,6 @@ app.post('/webhook/', function(req, res) {
         let sender = event.sender.id
         if (event.message && event.message.text) {
             let text = event.message.text
-                // if (text === 'Generic') {
-                //     sendGenericMessage(sender)
-                //     continue
-                // }
             let maxConfidence = 0;
             let entities = "";
             let stdConfidence = 0.7;
@@ -109,7 +105,6 @@ app.post('/webhook/', function(req, res) {
                         messageFromUser = result.entities[Object.keys(result.entities)[i]][0].value;
                     }
                 }
-
 
                 //Greeting State
                 if (maxConfidence > stdConfidence && entities === "greeting") {
@@ -723,55 +718,6 @@ function sendTarotPack(numberCardArr, backgroundCardImageURL, sender) {
                         "type": "postback",
                         "title": "เลือกใบนี้",
                         "payload": numberCardArr[9],
-                    }],
-                }]
-            }
-        }
-    }
-    request({
-        url: 'https://graph.facebook.com/v2.6/me/messages',
-        qs: { access_token: token },
-        method: 'POST',
-        json: {
-            recipient: { id: sender },
-            message: messageData,
-        }
-    }, function(error, response, body) {
-        if (error) {
-            console.log('Error sending messages: ', error)
-        } else if (response.body.error) {
-            console.log('Error: ', response.body.error)
-        }
-    })
-}
-
-function sendGenericMessage(sender) {
-    let messageData = {
-        "attachment": {
-            "type": "template",
-            "payload": {
-                "template_type": "generic",
-                "elements": [{
-                    "title": "First card",
-                    "subtitle": "Element #1 of an hscroll",
-                    "image_url": "http://messengerdemo.parseapp.com/img/rift.png",
-                    "buttons": [{
-                        "type": "web_url",
-                        "url": "https://www.messenger.com",
-                        "title": "web url"
-                    }, {
-                        "type": "postback",
-                        "title": "Postback",
-                        "payload": "Payload for first element in a generic bubble",
-                    }],
-                }, {
-                    "title": "Second card",
-                    "subtitle": "Element #2 of an hscroll",
-                    "image_url": "http://messengerdemo.parseapp.com/img/gearvr.png",
-                    "buttons": [{
-                        "type": "postback",
-                        "title": "Postback",
-                        "payload": "Payload for second element in a generic bubble",
                     }],
                 }]
             }
