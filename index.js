@@ -99,7 +99,7 @@ app.post('/webhook/', function(req, res) {
                         maxConfidence = result.entities[Object.keys(result.entities)[i]][0].confidence;
                         entities = Object.keys(result.entities)[i];
                         messageFromUser = result.entities[Object.keys(result.entities)[i]][0].value;
-                    } else if (result.entities[Object.keys(result.entities)[i]][0].confidence > maxConfidence) {
+                    } else if (result.entities[Object.keys(result.entities)[i]][0].confidence > maxConfidence || (entities === "horoscope" && (Object.keys(result.entities)[i] === "birthday" || Object.keys(result.entities)[i] === "tarot" || Object.keys(result.entities)[i] === "fortuneSticks"))) {
                         maxConfidence = result.entities[Object.keys(result.entities)[i]][0].confidence;
                         entities = Object.keys(result.entities)[i];
                         messageFromUser = result.entities[Object.keys(result.entities)[i]][0].value;
