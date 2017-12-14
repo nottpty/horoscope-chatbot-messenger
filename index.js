@@ -32,11 +32,9 @@ const { Wit, log } = require('node-wit');
 
 const client = new Wit({
     accessToken: process.env.WIT_ACCESS_TOKEN,
-    // accessToken: 'UH7OOY34YWNIK5IMUJO7NRVGKHENN2UG',
     // logger: new log.Logger(log.DEBUG) // optional
 });
 const token = process.env.FB_PAGE_ACCESS_TOKEN;
-// const token = 'EAACjWLHUVZAoBABQlUfgvr7VP2FMLOF1bDBffcN9FZBN3ml5nRh72dS9nZBQ32yNfhiyWbymseRWtGlTzLiZBwZCG3SWYcDR51tZAaudv60t4kggD7hJhB1dlx7ZCqt84VyfsKxtnyC6gTnVU2NI09q5my0zrSgOrToXtKkZBEWNAwZDZD';
 
 let stateConversation = "";
 let realBirthday = [];
