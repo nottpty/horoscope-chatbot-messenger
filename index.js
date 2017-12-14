@@ -273,13 +273,9 @@ app.post('/webhook/', function(req, res) {
                     if (index === 0) {
                         // send(sender, messageFromUser + " " + nothingWord[index])
                         sendAskDetailButtonMessage(messageFromUser + " " + nothingWord[index] + " " + takeToHoroscopeSentence, sender);
-                        mainState = "nothing";
-                        supState = "1";
                     } else {
                         // send(sender, nothingWord[index])
                         sendAskDetailButtonMessage(nothingWord[index] + " " + takeToHoroscopeSentence, sender);
-                        mainState = "nothing";
-                        supState = "1";
                     }
                 }
             })
